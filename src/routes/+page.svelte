@@ -3,9 +3,9 @@
 	import '@esri/calcite-components/dist/calcite/calcite.css';
 
 	import type { Widget } from '$lib/types';
+	import type FeatureLayer from '@arcgis/core/layers/FeatureLayer';
 	import { defineCustomElements as defineMapElements } from '@arcgis/map-components/dist/loader';
 	import { defineCustomElements as defineCalciteElements } from '@esri/calcite-components/dist/loader';
-	import { afterUpdate, beforeUpdate, onMount } from 'svelte';
 
 	defineCalciteElements(window, {
 		resourcesUrl: 'https://js.arcgis.com/calcite-components/1.7.0/assets'
@@ -30,7 +30,35 @@
 		}
 	];
 
+	let arcgisLayerList: HTMLArcgisLayerListElement;
+	let arcgisMap: HTMLArcgisMapElement;
 	let selectedWidget = widgets[0];
+
+	function handleLayerListReady() {
+		const layerList = arcgisLayerList.widget;
+		layerList.listItemCreatedFunction = listItemCreatedFuntion;
+	}
+
+	async function handleViewReady() {
+		const mapView = arcgisMap.view;
+		await mapView.when();
+
+		const hazardAreasFeatureLayer = mapView.map.layers.find(
+			(layer) => layer.title === 'Hazard Areas'
+		) as FeatureLayer;
+
+		const result = await hazardAreasFeatureLayer.queryFeatures();
+		mapView.goTo(result.features);
+	}
+
+	function listItemCreatedFuntion(event: any) {
+		const item = event.item;
+		if (item.layer.type != 'group') {
+			item.panel = {
+				content: 'legend'
+			};
+		}
+	}
 
 	function selectWidget(widget: Widget) {
 		selectedWidget = widget;
@@ -54,14 +82,22 @@
 		</calcite-action-bar>
 
 		{#if selectedWidget.id === 'arcgis-layer-list'}
-			<arcgis-layer-list reference-element="arcgis-map" />
+			<arcgis-layer-list
+				bind:this={arcgisLayerList}
+				on:widgetReady={handleLayerListReady}
+				reference-element="arcgis-map"
+			/>
 		{:else if selectedWidget.id === 'arcgis-legend'}
 			<arcgis-legend reference-element="arcgis-map" />
 		{:else if selectedWidget.id === 'arcgis-editor'}
 			<arcgis-editor reference-element="arcgis-map" />
 		{/if}
 	</calcite-shell-panel>
-	<arcgis-map item-id="459a495fc16d4d4caa35e92e895694c8" />
+	<arcgis-map
+		bind:this={arcgisMap}
+		on:viewReady={handleViewReady}
+		item-id="459a495fc16d4d4caa35e92e895694c8"
+	/>
 </calcite-shell>
 
 <style>
