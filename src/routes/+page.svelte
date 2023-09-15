@@ -3,6 +3,8 @@
 	import '@esri/calcite-components/dist/calcite/calcite.css';
 
 	import type { Widget } from '$lib/types';
+	import * as reactiveUtils from '@arcgis/core/core/reactiveUtils';
+	import type Point from '@arcgis/core/geometry/Point';
 	import type FeatureLayer from '@arcgis/core/layers/FeatureLayer';
 	import { defineCustomElements as defineMapElements } from '@arcgis/map-components/dist/loader';
 	import { defineCustomElements as defineCalciteElements } from '@esri/calcite-components/dist/loader';
@@ -32,6 +34,7 @@
 
 	let arcgisLayerList: HTMLArcgisLayerListElement;
 	let arcgisMap: HTMLArcgisMapElement;
+	let center: Point;
 	let selectedWidget = widgets[0];
 
 	function handleLayerListReady() {
@@ -49,6 +52,11 @@
 
 		const result = await hazardAreasFeatureLayer.queryFeatures();
 		mapView.goTo(result.features);
+
+		reactiveUtils.watch(
+			() => mapView.center,
+			() => (center = mapView.center)
+		);
 	}
 
 	function listItemCreatedFuntion(event: any) {
@@ -77,6 +85,15 @@
 			{/each}
 		</calcite-action-bar>
 
+		{#if center}
+			<calcite-block open>
+				<div>The view's center</div>
+				<div>
+					{center.longitude.toFixed(2)}° longitude {center.latitude.toFixed(2)}° latitude
+				</div></calcite-block
+			>
+		{/if}
+
 		{#if selectedWidget.id === 'arcgis-layer-list'}
 			<arcgis-layer-list
 				bind:this={arcgisLayerList}
@@ -89,6 +106,7 @@
 			<arcgis-editor reference-element="arcgis-map" />
 		{/if}
 	</calcite-shell-panel>
+
 	<arcgis-map
 		bind:this={arcgisMap}
 		on:viewReady={handleViewReady}
