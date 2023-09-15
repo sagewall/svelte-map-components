@@ -74,7 +74,7 @@
 					on:keypress={() => selectWidget(widget)}
 					tabindex="0"
 					role="button"
-					active={widget.id === selectedWidget.id}
+					active={widget.id === selectedWidget.id ? true : undefined}
 					icon={widget.icon}
 					text={widget.text}
 				/>
