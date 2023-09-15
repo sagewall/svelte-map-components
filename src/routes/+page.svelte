@@ -59,10 +59,6 @@
 			};
 		}
 	}
-
-	function selectWidget(widget: Widget) {
-		selectedWidget = widget;
-	}
 </script>
 
 <calcite-shell>
@@ -70,8 +66,8 @@
 		<calcite-action-bar slot="action-bar">
 			{#each widgets as widget}
 				<calcite-action
-					on:click={() => selectWidget(widget)}
-					on:keypress={() => selectWidget(widget)}
+					on:click={() => (selectedWidget = widget)}
+					on:keypress={() => (selectedWidget = widget)}
 					tabindex="0"
 					role="button"
 					active={widget.id === selectedWidget.id ? true : undefined}
