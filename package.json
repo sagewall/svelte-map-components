@@ -14,6 +14,7 @@
 	"devDependencies": {
 		"@arcgis/map-components": "^4.28.0-beta.33",
 		"@sveltejs/adapter-auto": "^2.1.0",
+		"@sveltejs/adapter-netlify": "^2.0.8",
 		"@sveltejs/kit": "^1.25.2",
 		"@typescript-eslint/eslint-plugin": "^6.8.0",
 		"@typescript-eslint/parser": "^6.8.0",
