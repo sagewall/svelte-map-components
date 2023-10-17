@@ -43,7 +43,6 @@
 
 	async function handleViewReady(event: CustomEvent) {
 		const mapView = event.detail.view as MapView;
-		await mapView.when();
 
 		const hazardAreasFeatureLayer = mapView.map.layers.find(
 			(layer) => layer.title === 'Hazard Areas'
