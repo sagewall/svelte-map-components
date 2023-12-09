@@ -1,10 +1,11 @@
 <script lang="ts">
 	import type { Widget } from '$lib/types';
+	import type WebMap from '@arcgis/core/WebMap';
 	import * as reactiveUtils from '@arcgis/core/core/reactiveUtils';
 	import type Point from '@arcgis/core/geometry/Point';
 	import type FeatureLayer from '@arcgis/core/layers/FeatureLayer';
+	import type MapView from '@arcgis/core/views/MapView';
 	import type LayerList from '@arcgis/core/widgets/LayerList';
-	import type WebMap from '@arcgis/core/WebMap';
 	import type ListItem from '@arcgis/core/widgets/LayerList/ListItem';
 	import type ListItemPanel from '@arcgis/core/widgets/LayerList/ListItemPanel';
 	import {
@@ -38,8 +39,12 @@
 	];
 
 	let activeWidget = widgets[0];
-	let navigationLogo: HTMLCalciteNavigationLogoElement;
 	let center: Point;
+	let mapView: MapView;
+
+	$: latitude = center?.latitude.toFixed(2);
+	$: longitude = center?.longitude.toFixed(2);
+	$: map = mapView?.map as WebMap;
 
 	function handleLayerListReady(
 		event: ArcgisLayerListCustomEvent<{
@@ -47,12 +52,14 @@
 		}>
 	) {
 		const layerList = event.detail.widget;
+		layerList.filterPlaceholder = 'Filter layers';
 		layerList.listItemCreatedFunction = listItemCreatedFuntion;
+		layerList.multipleSelectionEnabled = true;
+		layerList.selectionEnabled = true;
 		layerList.visibleElements.collapseButton = true;
 		layerList.visibleElements.closeButton = true;
 		layerList.visibleElements.filter = true;
 		layerList.visibleElements.heading = true;
-		layerList.filterPlaceholder = 'Filter layers';
 	}
 
 	async function handleViewReady(
@@ -60,15 +67,7 @@
 			view: __esri.MapView;
 		}>
 	) {
-		const mapView = event.target.view;
-		const map = mapView.map as WebMap;
-		const { portalItem } = map;
-
-		navigationLogo.heading = portalItem.title;
-		navigationLogo.description = portalItem.snippet;
-		navigationLogo.thumbnail = portalItem.thumbnailUrl;
-		navigationLogo.href = portalItem.itemPageUrl;
-		navigationLogo.label = 'Thumbnail of map';
+		mapView = event.target.view;
 
 		const hazardAreasFeatureLayer = mapView.map.layers.find(
 			(layer) => layer.title === 'Hazard Areas'
@@ -95,7 +94,14 @@
 
 <calcite-shell>
 	<calcite-navigation slot="header">
-		<calcite-navigation-logo bind:this={navigationLogo} slot="logo" />
+		<calcite-navigation-logo
+			description={map?.portalItem?.snippet}
+			heading={map?.portalItem?.title}
+			slot="logo"
+			thumbnail={map?.portalItem?.thumbnailUrl}
+			href={map?.portalItem?.itemPageUrl}
+			label="Thumbnail of map"
+		/>
 	</calcite-navigation>
 	<calcite-shell-panel slot="panel-start" position="start">
 		<calcite-action-bar slot="action-bar">
@@ -124,9 +130,9 @@
 	{#if center}
 		<shell-center-row>
 			<div>
-				Map Center: {center.longitude.toFixed(2)}° longitude {center.latitude.toFixed(2)}° latitude
-			</div></shell-center-row
-		>
+				Map Center: {longitude}° longitude {latitude}° latitude
+			</div>
+		</shell-center-row>
 	{/if}
 
 	<arcgis-map on:viewReady={handleViewReady} item-id="459a495fc16d4d4caa35e92e895694c8" />
