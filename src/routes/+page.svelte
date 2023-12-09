@@ -3,11 +3,15 @@
 	import * as reactiveUtils from '@arcgis/core/core/reactiveUtils';
 	import type Point from '@arcgis/core/geometry/Point';
 	import type FeatureLayer from '@arcgis/core/layers/FeatureLayer';
-	import type MapView from '@arcgis/core/views/MapView';
 	import type LayerList from '@arcgis/core/widgets/LayerList';
+	import type WebMap from '@arcgis/core/WebMap';
 	import type ListItem from '@arcgis/core/widgets/LayerList/ListItem';
 	import type ListItemPanel from '@arcgis/core/widgets/LayerList/ListItemPanel';
-	import { defineCustomElements as defineMapElements } from '@arcgis/map-components/dist/loader';
+	import {
+		defineCustomElements as defineMapElements,
+		type ArcgisLayerListCustomEvent,
+		type ArcgisMapCustomEvent
+	} from '@arcgis/map-components/dist/loader';
 	import { defineCustomElements as defineCalciteElements } from '@esri/calcite-components/dist/loader';
 
 	defineCalciteElements(window, {
@@ -34,15 +38,37 @@
 	];
 
 	let activeWidget = widgets[0];
+	let navigationLogo: HTMLCalciteNavigationLogoElement;
 	let center: Point;
 
-	function handleLayerListReady(event: { detail: { widget: LayerList } }) {
+	function handleLayerListReady(
+		event: ArcgisLayerListCustomEvent<{
+			widget: LayerList;
+		}>
+	) {
 		const layerList = event.detail.widget;
 		layerList.listItemCreatedFunction = listItemCreatedFuntion;
+		layerList.visibleElements.collapseButton = true;
+		layerList.visibleElements.closeButton = true;
+		layerList.visibleElements.filter = true;
+		layerList.visibleElements.heading = true;
+		layerList.filterPlaceholder = 'Filter layers';
 	}
 
-	async function handleViewReady(event: CustomEvent) {
-		const mapView = event.detail.view as MapView;
+	async function handleViewReady(
+		event: ArcgisMapCustomEvent<{
+			view: __esri.MapView;
+		}>
+	) {
+		const mapView = event.target.view;
+		const map = mapView.map as WebMap;
+		const { portalItem } = map;
+
+		navigationLogo.heading = portalItem.title;
+		navigationLogo.description = portalItem.snippet;
+		navigationLogo.thumbnail = portalItem.thumbnailUrl;
+		navigationLogo.href = portalItem.itemPageUrl;
+		navigationLogo.label = 'Thumbnail of map';
 
 		const hazardAreasFeatureLayer = mapView.map.layers.find(
 			(layer) => layer.title === 'Hazard Areas'
@@ -58,7 +84,7 @@
 	}
 
 	function listItemCreatedFuntion(event: { item: ListItem }) {
-		const item = event.item;
+		const { item } = event;
 		if (item.layer.type != 'group') {
 			item.panel = {
 				content: 'legend'
@@ -68,6 +94,9 @@
 </script>
 
 <calcite-shell>
+	<calcite-navigation slot="header">
+		<calcite-navigation-logo bind:this={navigationLogo} slot="logo" />
+	</calcite-navigation>
 	<calcite-shell-panel slot="panel-start" position="start">
 		<calcite-action-bar slot="action-bar">
 			{#each widgets as widget}
