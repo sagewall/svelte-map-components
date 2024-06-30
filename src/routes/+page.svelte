@@ -90,7 +90,6 @@
 			item-id="d5dda743788a4b0688fe48f43ae7beb9"
 			on:arcgisViewChange={handleArcgisViewChange}
 			on:arcgisViewReadyChange={handleArcgisViewReadyChange}
-			ref={arcgisMap}
 		></arcgis-map>
 		{#if center}
 			<shell-center-row>
