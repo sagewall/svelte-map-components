@@ -1,38 +1,26 @@
 <script lang="ts">
-	import type { Widget } from '$lib/types';
 	import '@arcgis/core/assets/esri/themes/light/main.css';
 	import type Point from '@arcgis/core/geometry/Point';
-	import type { ArcgisMap } from '@arcgis/map-components/dist/components/arcgis-map';
 	import '@esri/calcite-components/dist/calcite/calcite.css';
 	import { onMount } from 'svelte';
 
-	const widgets: Widget[] = [
-		{
-			icon: 'layers',
-			id: 'arcgis-layer-list',
-			text: 'Layer List'
-		},
-		{
-			icon: 'legend',
-			id: 'arcgis-legend',
-			text: 'Legend'
-		}
-	];
-
-	let arcgisMap: ArcgisMap | null = null;
-	let activeWidget = widgets[0];
+	let arcgisMap: HTMLArcgisMapElement | null = null;
 	let center: Point;
 	let mounted = false;
+	let selectedItem: HTMLCalciteDropdownItemElement | null = null;
+	let selectedItems: HTMLCalciteDropdownItemElement[] = [];
 
 	$: latitude = center?.latitude.toFixed(2);
 	$: longitude = center?.longitude.toFixed(2);
 
 	onMount(async () => {
-		await import('@arcgis/map-components/dist/components/arcgis-layer-list');
-		await import('@arcgis/map-components/dist/components/arcgis-legend');
 		await import('@arcgis/map-components/dist/components/arcgis-map');
 		await import('@esri/calcite-components/dist/components/calcite-action');
 		await import('@esri/calcite-components/dist/components/calcite-action-bar');
+		await import('@esri/calcite-components/dist/components/calcite-button');
+		await import('@esri/calcite-components/dist/components/calcite-dropdown');
+		await import('@esri/calcite-components/dist/components/calcite-dropdown-group');
+		await import('@esri/calcite-components/dist/components/calcite-dropdown-item');
 		await import('@esri/calcite-components/dist/components/calcite-navigation');
 		await import('@esri/calcite-components/dist/components/calcite-navigation-logo');
 		await import('@esri/calcite-components/dist/components/calcite-shell');
@@ -46,11 +34,33 @@
 	});
 
 	function handleArcgisViewChange(event: CustomEvent) {
-		center = (event.target as ArcgisMap).center;
+		center = (event.target as HTMLArcgisMapElement).center;
 	}
 
 	function handleArcgisViewReadyChange(event: CustomEvent) {
-		arcgisMap = event.target as ArcgisMap;
+		arcgisMap = event.target as HTMLArcgisMapElement;
+	}
+
+	function handleOnCalciteDropdownSelect(event: { target: HTMLCalciteDropdownElement }) {
+		if (event.target) {
+			selectedItems = event.target.selectedItems;
+
+			selectedItems.forEach((item) => {
+				switch (item.id) {
+					case 'arcgis-area-measurement-2d':
+						import('@arcgis/map-components/dist/components/arcgis-area-measurement-2d');
+						break;
+					case 'arcgis-layer-list':
+						import('@arcgis/map-components/dist/components/arcgis-layer-list');
+						break;
+					case 'arcgis-legend':
+						import('@arcgis/map-components/dist/components/arcgis-legend');
+						break;
+					default:
+						break;
+				}
+			});
+		}
 	}
 </script>
 
@@ -65,24 +75,46 @@
 				href={arcgisMap?.map.portalItem.itemPageUrl}
 				label="Thumbnail of map"
 			/>
+			<calcite-dropdown
+				close-on-select-disabled
+				on:calciteDropdownSelect={handleOnCalciteDropdownSelect}
+				slot="content-end"
+			>
+				<calcite-button slot="trigger">Select Components</calcite-button>
+				<calcite-dropdown-group selection-mode="multiple">
+					<calcite-dropdown-item
+						icon-start="measure-area"
+						id="arcgis-area-measurement-2d"
+						label="Area Measurement 2D">Area Measurement 2D</calcite-dropdown-item
+					>
+					<calcite-dropdown-item icon-start="layers" id="arcgis-layer-list" label="Layer List"
+						>Layer List</calcite-dropdown-item
+					>
+					<calcite-dropdown-item icon-start="legend" id="arcgis-legend" label="Legend"
+						>Legend</calcite-dropdown-item
+					>
+				</calcite-dropdown-group>
+			</calcite-dropdown>
 		</calcite-navigation>
 		<calcite-shell-panel slot="panel-start" position="start">
 			<calcite-action-bar slot="action-bar">
-				{#each widgets as widget}
+				{#each selectedItems as item, index}
 					<calcite-action
-						on:click={() => (activeWidget = widget)}
-						on:keypress={() => (activeWidget = widget)}
+						on:click={() => (selectedItem = selectedItems[index])}
+						on:keypress={() => (selectedItem = selectedItems[index])}
 						tabindex="0"
 						role="button"
-						active={widget.id === activeWidget.id ? true : undefined}
-						icon={widget.icon}
-						text={widget.text}
+						active={item.id === selectedItem?.id ? true : undefined}
+						icon={item.iconStart}
+						text={item.label}
 					/>
 				{/each}
 			</calcite-action-bar>
-			{#if activeWidget.id === 'arcgis-layer-list'}
+			{#if selectedItem?.id === 'arcgis-area-measurement-2d'}
+				<arcgis-area-measurement-2d reference-element="arcgis-map" />
+			{:else if selectedItem?.id === 'arcgis-layer-list'}
 				<arcgis-layer-list reference-element="arcgis-map" />
-			{:else if activeWidget.id === 'arcgis-legend'}
+			{:else if selectedItem?.id === 'arcgis-legend'}
 				<arcgis-legend reference-element="arcgis-map" />
 			{/if}
 		</calcite-shell-panel>
