@@ -68,6 +68,9 @@
 					case 'arcgis-coordinate-conversion':
 						await import('@arcgis/map-components/dist/components/arcgis-coordinate-conversion');
 						break;
+					case 'arcgis-directional-pad':
+						await import('@arcgis/map-components/dist/components/arcgis-directional-pad');
+						break;
 					case 'arcgis-layer-list':
 						await import('@arcgis/map-components/dist/components/arcgis-layer-list');
 						break;
@@ -131,6 +134,11 @@
 						id="arcgis-coordinate-conversion"
 						label="Coordinate Conversion">Coordinate Conversion</calcite-dropdown-item
 					>
+					<calcite-dropdown-item
+						icon-start="move"
+						id="arcgis-directional-pad"
+						label="Directional Pad">Directional Pad</calcite-dropdown-item
+					>
 					<calcite-dropdown-item icon-start="layers" id="arcgis-layer-list" label="Layer List"
 						>Layer List</calcite-dropdown-item
 					>
@@ -170,6 +178,8 @@
 				{:else if selectedItem?.id === 'arcgis-coordinate-conversion'}
 					<arcgis-coordinate-conversion reference-element="arcgis-map"
 					></arcgis-coordinate-conversion>
+				{:else if selectedItem?.id === 'arcgis-directional-pad'}
+					<arcgis-directional-pad reference-element="arcgis-map"></arcgis-directional-pad>
 				{:else if selectedItem?.id === 'arcgis-layer-list'}
 					<arcgis-layer-list reference-element="arcgis-map"></arcgis-layer-list>
 				{:else if selectedItem?.id === 'arcgis-legend'}
