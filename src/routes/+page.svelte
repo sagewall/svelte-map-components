@@ -45,16 +45,19 @@
 		if (event.target) {
 			selectedItems = event.target.selectedItems;
 
-			selectedItems.forEach((item) => {
+			selectedItems.forEach(async (item) => {
 				switch (item.id) {
 					case 'arcgis-area-measurement-2d':
-						import('@arcgis/map-components/dist/components/arcgis-area-measurement-2d');
+						await import('@arcgis/map-components/dist/components/arcgis-area-measurement-2d');
+						break;
+					case 'arcgis-basemap-gallery':
+						await import('@arcgis/map-components/dist/components/arcgis-basemap-gallery');
 						break;
 					case 'arcgis-layer-list':
-						import('@arcgis/map-components/dist/components/arcgis-layer-list');
+						await import('@arcgis/map-components/dist/components/arcgis-layer-list');
 						break;
 					case 'arcgis-legend':
-						import('@arcgis/map-components/dist/components/arcgis-legend');
+						await import('@arcgis/map-components/dist/components/arcgis-legend');
 						break;
 					default:
 						break;
@@ -87,6 +90,11 @@
 						id="arcgis-area-measurement-2d"
 						label="Area Measurement 2D">Area Measurement 2D</calcite-dropdown-item
 					>
+					<calcite-dropdown-item
+						icon-start="basemap"
+						id="arcgis-basemap-gallery"
+						label="Basemap Gallery">Basemap Gallery</calcite-dropdown-item
+					>
 					<calcite-dropdown-item icon-start="layers" id="arcgis-layer-list" label="Layer List"
 						>Layer List</calcite-dropdown-item
 					>
@@ -111,11 +119,13 @@
 				{/each}
 			</calcite-action-bar>
 			{#if selectedItem?.id === 'arcgis-area-measurement-2d'}
-				<arcgis-area-measurement-2d reference-element="arcgis-map" />
+				<arcgis-area-measurement-2d reference-element="arcgis-map"></arcgis-area-measurement-2d>
+			{:else if selectedItem?.id === 'arcgis-basemap-gallery'}
+				<arcgis-basemap-gallery reference-element="arcgis-map"></arcgis-basemap-gallery>
 			{:else if selectedItem?.id === 'arcgis-layer-list'}
-				<arcgis-layer-list reference-element="arcgis-map" />
+				<arcgis-layer-list reference-element="arcgis-map"></arcgis-layer-list>
 			{:else if selectedItem?.id === 'arcgis-legend'}
-				<arcgis-legend reference-element="arcgis-map" />
+				<arcgis-legend reference-element="arcgis-map"></arcgis-legend>
 			{/if}
 		</calcite-shell-panel>
 		<arcgis-map
