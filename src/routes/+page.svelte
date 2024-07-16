@@ -65,6 +65,9 @@
 					case 'arcgis-compass':
 						await import('@arcgis/map-components/dist/components/arcgis-compass');
 						break;
+					case 'arcgis-coordinate-conversion':
+						await import('@arcgis/map-components/dist/components/arcgis-coordinate-conversion');
+						break;
 					case 'arcgis-layer-list':
 						await import('@arcgis/map-components/dist/components/arcgis-layer-list');
 						break;
@@ -123,6 +126,11 @@
 					<calcite-dropdown-item icon-start="compass" id="arcgis-compass" label="Compass"
 						>Compass</calcite-dropdown-item
 					>
+					<calcite-dropdown-item
+						icon-start="coordinate-system"
+						id="arcgis-coordinate-conversion"
+						label="Coordinate Conversion">Coordinate Conversion</calcite-dropdown-item
+					>
 					<calcite-dropdown-item icon-start="layers" id="arcgis-layer-list" label="Layer List"
 						>Layer List</calcite-dropdown-item
 					>
@@ -132,7 +140,7 @@
 				</calcite-dropdown-group>
 			</calcite-dropdown>
 		</calcite-navigation>
-		<calcite-shell-panel slot="panel-start" position="start">
+		<calcite-shell-panel slot="panel-start" position="start" resizable>
 			<calcite-action-bar slot="action-bar">
 				{#each selectedItems as item, index}
 					<calcite-action
@@ -146,23 +154,28 @@
 					/>
 				{/each}
 			</calcite-action-bar>
-			{#if selectedItem?.id === 'arcgis-area-measurement-2d'}
-				<arcgis-area-measurement-2d reference-element="arcgis-map"></arcgis-area-measurement-2d>
-			{:else if selectedItem?.id === 'arcgis-basemap-gallery'}
-				<arcgis-basemap-gallery reference-element="arcgis-map"></arcgis-basemap-gallery>
-			{:else if selectedItem?.id === 'arcgis-basemap-layer-list'}
-				<arcgis-basemap-layer-list reference-element="arcgis-map"></arcgis-basemap-layer-list>
-			{:else if selectedItem?.id === 'arcgis-basemap-toggle'}
-				<arcgis-basemap-toggle reference-element="arcgis-map"></arcgis-basemap-toggle>
-			{:else if selectedItem?.id === 'arcgis-bookmarks'}
-				<arcgis-bookmarks reference-element="arcgis-map"></arcgis-bookmarks>
-			{:else if selectedItem?.id === 'arcgis-compass'}
-				<arcgis-compass reference-element="arcgis-map"></arcgis-compass>
-			{:else if selectedItem?.id === 'arcgis-layer-list'}
-				<arcgis-layer-list reference-element="arcgis-map"></arcgis-layer-list>
-			{:else if selectedItem?.id === 'arcgis-legend'}
-				<arcgis-legend reference-element="arcgis-map"></arcgis-legend>
-			{/if}
+			<div>
+				{#if selectedItem?.id === 'arcgis-area-measurement-2d'}
+					<arcgis-area-measurement-2d reference-element="arcgis-map"></arcgis-area-measurement-2d>
+				{:else if selectedItem?.id === 'arcgis-basemap-gallery'}
+					<arcgis-basemap-gallery reference-element="arcgis-map"></arcgis-basemap-gallery>
+				{:else if selectedItem?.id === 'arcgis-basemap-layer-list'}
+					<arcgis-basemap-layer-list reference-element="arcgis-map"></arcgis-basemap-layer-list>
+				{:else if selectedItem?.id === 'arcgis-basemap-toggle'}
+					<arcgis-basemap-toggle reference-element="arcgis-map"></arcgis-basemap-toggle>
+				{:else if selectedItem?.id === 'arcgis-bookmarks'}
+					<arcgis-bookmarks reference-element="arcgis-map"></arcgis-bookmarks>
+				{:else if selectedItem?.id === 'arcgis-compass'}
+					<arcgis-compass reference-element="arcgis-map"></arcgis-compass>
+				{:else if selectedItem?.id === 'arcgis-coordinate-conversion'}
+					<arcgis-coordinate-conversion reference-element="arcgis-map"
+					></arcgis-coordinate-conversion>
+				{:else if selectedItem?.id === 'arcgis-layer-list'}
+					<arcgis-layer-list reference-element="arcgis-map"></arcgis-layer-list>
+				{:else if selectedItem?.id === 'arcgis-legend'}
+					<arcgis-legend reference-element="arcgis-map"></arcgis-legend>
+				{/if}
+			</div>
 		</calcite-shell-panel>
 		<arcgis-map
 			item-id="d5dda743788a4b0688fe48f43ae7beb9"
@@ -182,6 +195,9 @@
 {/if}
 
 <style>
+	:global(.esri-coordinate-conversion.esri-widget) {
+		width: 100%;
+	}
 	arcgis-map {
 		flex: 1;
 	}
