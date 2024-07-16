@@ -56,6 +56,9 @@
 					case 'arcgis-basemap-layer-list':
 						await import('@arcgis/map-components/dist/components/arcgis-basemap-layer-list');
 						break;
+					case 'arcgis-basemap-toggle':
+						await import('@arcgis/map-components/dist/components/arcgis-basemap-toggle');
+						break;
 					case 'arcgis-layer-list':
 						await import('@arcgis/map-components/dist/components/arcgis-layer-list');
 						break;
@@ -103,6 +106,11 @@
 						id="arcgis-basemap-layer-list"
 						label="Basemap Layer List">Basemap Layer List</calcite-dropdown-item
 					>
+					<calcite-dropdown-item
+						icon-start="toggle"
+						id="arcgis-basemap-toggle"
+						label="Basemap Toggle">Basemap Toggle</calcite-dropdown-item
+					>
 					<calcite-dropdown-item icon-start="layers" id="arcgis-layer-list" label="Layer List"
 						>Layer List</calcite-dropdown-item
 					>
@@ -132,6 +140,8 @@
 				<arcgis-basemap-gallery reference-element="arcgis-map"></arcgis-basemap-gallery>
 			{:else if selectedItem?.id === 'arcgis-basemap-layer-list'}
 				<arcgis-basemap-layer-list reference-element="arcgis-map"></arcgis-basemap-layer-list>
+			{:else if selectedItem?.id === 'arcgis-basemap-toggle'}
+				<arcgis-basemap-toggle reference-element="arcgis-map"></arcgis-basemap-toggle>
 			{:else if selectedItem?.id === 'arcgis-layer-list'}
 				<arcgis-layer-list reference-element="arcgis-map"></arcgis-layer-list>
 			{:else if selectedItem?.id === 'arcgis-legend'}
