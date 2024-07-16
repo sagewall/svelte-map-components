@@ -62,6 +62,9 @@
 					case 'arcgis-bookmarks':
 						await import('@arcgis/map-components/dist/components/arcgis-bookmarks');
 						break;
+					case 'arcgis-compass':
+						await import('@arcgis/map-components/dist/components/arcgis-compass');
+						break;
 					case 'arcgis-layer-list':
 						await import('@arcgis/map-components/dist/components/arcgis-layer-list');
 						break;
@@ -117,6 +120,9 @@
 					<calcite-dropdown-item icon-start="bookmark" id="arcgis-bookmarks" label="Bookmarks"
 						>Bookmarks</calcite-dropdown-item
 					>
+					<calcite-dropdown-item icon-start="compass" id="arcgis-compass" label="Compass"
+						>Compass</calcite-dropdown-item
+					>
 					<calcite-dropdown-item icon-start="layers" id="arcgis-layer-list" label="Layer List"
 						>Layer List</calcite-dropdown-item
 					>
@@ -150,6 +156,8 @@
 				<arcgis-basemap-toggle reference-element="arcgis-map"></arcgis-basemap-toggle>
 			{:else if selectedItem?.id === 'arcgis-bookmarks'}
 				<arcgis-bookmarks reference-element="arcgis-map"></arcgis-bookmarks>
+			{:else if selectedItem?.id === 'arcgis-compass'}
+				<arcgis-compass reference-element="arcgis-map"></arcgis-compass>
 			{:else if selectedItem?.id === 'arcgis-layer-list'}
 				<arcgis-layer-list reference-element="arcgis-map"></arcgis-layer-list>
 			{:else if selectedItem?.id === 'arcgis-legend'}
