@@ -118,6 +118,9 @@
 					case 'arcgis-print':
 						await import('@arcgis/map-components/dist/components/arcgis-print');
 						break;
+					case 'arcgis-scale-bar':
+						await import('@arcgis/map-components/dist/components/arcgis-scale-bar');
+						break;
 					default:
 						break;
 				}
@@ -209,6 +212,11 @@
 					<calcite-dropdown-item data-component="arcgis-print" icon-start="print" label="Print"
 						>Print</calcite-dropdown-item
 					>
+					<calcite-dropdown-item
+						data-component="arcgis-scale-bar"
+						icon-start="actual-size"
+						label="Scale Bar">Scale Bar</calcite-dropdown-item
+					>
 				</calcite-dropdown-group>
 			</calcite-dropdown>
 		</calcite-navigation>
@@ -261,6 +269,8 @@
 						<arcgis-locate reference-element="arcgis-map"></arcgis-locate>
 					{:else if selectedItem.dataset.component === 'arcgis-print'}
 						<arcgis-print reference-element="arcgis-map"></arcgis-print>
+					{:else if selectedItem.dataset.component === 'arcgis-scale-bar'}
+						<arcgis-scale-bar reference-element="arcgis-map"></arcgis-scale-bar>
 					{/if}
 				{/if}
 			</div>
