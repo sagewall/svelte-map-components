@@ -103,6 +103,9 @@
 					case 'arcgis-editor':
 						await import('@arcgis/map-components/dist/components/arcgis-editor');
 						break;
+					case 'arcgis-home':
+						await import('@arcgis/map-components/dist/components/arcgis-home');
+						break;
 					case 'arcgis-layer-list':
 						await import('@arcgis/map-components/dist/components/arcgis-layer-list');
 						break;
@@ -179,6 +182,9 @@
 					<calcite-dropdown-item icon-start="pencil" id="arcgis-editor" label="Editor"
 						>Editor</calcite-dropdown-item
 					>
+					<calcite-dropdown-item icon-start="home" id="arcgis-home" label="Home"
+						>Home</calcite-dropdown-item
+					>
 					<calcite-dropdown-item icon-start="layers" id="arcgis-layer-list" label="Layer List"
 						>Layer List</calcite-dropdown-item
 					>
@@ -226,6 +232,8 @@
 				{:else if selectedItem?.id === 'arcgis-editor'}
 					<arcgis-editor on:arcgisReady={handleArcgisReadyEditor} reference-element="arcgis-map"
 					></arcgis-editor>
+				{:else if selectedItem?.id === 'arcgis-home'}
+					<arcgis-home reference-element="arcgis-map"></arcgis-home>
 				{:else if selectedItem?.id === 'arcgis-layer-list'}
 					<arcgis-layer-list reference-element="arcgis-map"></arcgis-layer-list>
 				{:else if selectedItem?.id === 'arcgis-legend'}
