@@ -1,6 +1,8 @@
 <script lang="ts">
 	import '@arcgis/core/assets/esri/themes/light/main.css';
 	import type Point from '@arcgis/core/geometry/Point';
+	import FeatureLayer from '@arcgis/core/layers/FeatureLayer';
+	import type LayerView from '@arcgis/core/views/layers/LayerView';
 	import '@esri/calcite-components/dist/calcite/calcite.css';
 	import { onMount } from 'svelte';
 
@@ -32,6 +34,30 @@
 
 		mounted = true;
 	});
+
+	function handleArcgisReadyEditor() {
+		const mapComponent = document.querySelector('arcgis-map');
+
+		if (mapComponent) {
+			const featureLayerIds = mapComponent.layerViews.map((layerView: LayerView) => {
+				if (layerView.layer.type === 'feature') {
+					return (layerView.layer as FeatureLayer).portalItem.id;
+				}
+			});
+
+			const editableLayerIds = [
+				'7252a8de226f4b039169b4a85ec5f1a6',
+				'fa80bf61cd6349809c5bcab757ad4873',
+				'1eb67a37df674ed9857ffdf4113eff8e'
+			];
+
+			editableLayerIds.forEach((id) => {
+				if (!featureLayerIds.includes(id)) {
+					mapComponent.addLayer(new FeatureLayer({ portalItem: { id } }));
+				}
+			});
+		}
+	}
 
 	function handleArcgisViewChange(event: CustomEvent) {
 		center = (event.target as HTMLArcgisMapElement).center;
@@ -73,6 +99,9 @@
 						break;
 					case 'arcgis-distance-measurement-2d':
 						await import('@arcgis/map-components/dist/components/arcgis-distance-measurement-2d');
+						break;
+					case 'arcgis-editor':
+						await import('@arcgis/map-components/dist/components/arcgis-editor');
 						break;
 					case 'arcgis-layer-list':
 						await import('@arcgis/map-components/dist/components/arcgis-layer-list');
@@ -143,9 +172,12 @@
 						label="Directional Pad">Directional Pad</calcite-dropdown-item
 					>
 					<calcite-dropdown-item
-						icon-start="move"
+						icon-start="measure"
 						id="arcgis-distance-measurement-2d"
 						label="Distance Measurement 2D">Distance Measurement 2D</calcite-dropdown-item
+					>
+					<calcite-dropdown-item icon-start="pencil" id="arcgis-editor" label="Editor"
+						>Editor</calcite-dropdown-item
 					>
 					<calcite-dropdown-item icon-start="layers" id="arcgis-layer-list" label="Layer List"
 						>Layer List</calcite-dropdown-item
@@ -191,6 +223,9 @@
 				{:else if selectedItem?.id === 'arcgis-distance-measurement-2d'}
 					<arcgis-distance-measurement-2d reference-element="arcgis-map"
 					></arcgis-distance-measurement-2d>
+				{:else if selectedItem?.id === 'arcgis-editor'}
+					<arcgis-editor on:arcgisReady={handleArcgisReadyEditor} reference-element="arcgis-map"
+					></arcgis-editor>
 				{:else if selectedItem?.id === 'arcgis-layer-list'}
 					<arcgis-layer-list reference-element="arcgis-map"></arcgis-layer-list>
 				{:else if selectedItem?.id === 'arcgis-legend'}
