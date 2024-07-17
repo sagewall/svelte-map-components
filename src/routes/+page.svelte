@@ -132,6 +132,9 @@
 					case 'arcgis-scale-range-slider':
 						await import('@arcgis/map-components/dist/components/arcgis-scale-range-slider');
 						break;
+					case 'arcgis-search':
+						await import('@arcgis/map-components/dist/components/arcgis-search');
+						break;
 					default:
 						break;
 				}
@@ -233,6 +236,9 @@
 						icon-start="select-range"
 						label="Scale Range Slider">Scale Range Slider</calcite-dropdown-item
 					>
+					<calcite-dropdown-item data-component="arcgis-search" icon-start="search" label="Search"
+						>Search</calcite-dropdown-item
+					>
 				</calcite-dropdown-group>
 			</calcite-dropdown>
 		</calcite-navigation>
@@ -292,6 +298,8 @@
 							on:arcgisReady={handleArcgisReadyScaleRangeSlider}
 							reference-element="arcgis-map"
 						></arcgis-scale-range-slider>
+					{:else if selectedItem.dataset.component === 'arcgis-search'}
+						<arcgis-search reference-element="arcgis-map"></arcgis-search>
 					{/if}
 				{/if}
 			</div>
