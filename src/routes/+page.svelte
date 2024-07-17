@@ -72,7 +72,7 @@
 			selectedItems = event.target.selectedItems;
 
 			selectedItems.forEach(async (item) => {
-				switch (item.id) {
+				switch (item.dataset.component) {
 					case 'arcgis-area-measurement-2d':
 						await import('@arcgis/map-components/dist/components/arcgis-area-measurement-2d');
 						break;
@@ -112,6 +112,9 @@
 					case 'arcgis-legend':
 						await import('@arcgis/map-components/dist/components/arcgis-legend');
 						break;
+					case 'arcgis-locate':
+						await import('@arcgis/map-components/dist/components/arcgis-locate');
+						break;
 					default:
 						break;
 				}
@@ -139,57 +142,66 @@
 				<calcite-button slot="trigger">Select Components</calcite-button>
 				<calcite-dropdown-group selection-mode="multiple">
 					<calcite-dropdown-item
+						data-component="arcgis-area-measurement-2d"
 						icon-start="measure-area"
-						id="arcgis-area-measurement-2d"
 						label="Area Measurement 2D">Area Measurement 2D</calcite-dropdown-item
 					>
 					<calcite-dropdown-item
+						data-component="arcgis-basemap-gallery"
 						icon-start="basemap"
-						id="arcgis-basemap-gallery"
 						label="Basemap Gallery">Basemap Gallery</calcite-dropdown-item
 					>
 					<calcite-dropdown-item
+						data-component="arcgis-basemap-layer-list"
 						icon-start="layer-basemap"
-						id="arcgis-basemap-layer-list"
 						label="Basemap Layer List">Basemap Layer List</calcite-dropdown-item
 					>
 					<calcite-dropdown-item
+						data-component="arcgis-basemap-toggle"
 						icon-start="toggle"
-						id="arcgis-basemap-toggle"
 						label="Basemap Toggle">Basemap Toggle</calcite-dropdown-item
 					>
-					<calcite-dropdown-item icon-start="bookmark" id="arcgis-bookmarks" label="Bookmarks"
-						>Bookmarks</calcite-dropdown-item
-					>
-					<calcite-dropdown-item icon-start="compass" id="arcgis-compass" label="Compass"
-						>Compass</calcite-dropdown-item
+					<calcite-dropdown-item
+						data-component="arcgis-bookmarks"
+						icon-start="bookmark"
+						label="Bookmarks">Bookmarks</calcite-dropdown-item
 					>
 					<calcite-dropdown-item
+						data-component="arcgis-compass"
+						icon-start="compass"
+						label="Compass">Compass</calcite-dropdown-item
+					>
+					<calcite-dropdown-item
+						data-component="arcgis-coordinate-conversion"
 						icon-start="coordinate-system"
-						id="arcgis-coordinate-conversion"
 						label="Coordinate Conversion">Coordinate Conversion</calcite-dropdown-item
 					>
 					<calcite-dropdown-item
+						data-component="arcgis-directional-pad"
 						icon-start="move"
-						id="arcgis-directional-pad"
 						label="Directional Pad">Directional Pad</calcite-dropdown-item
 					>
 					<calcite-dropdown-item
+						data-component="arcgis-distance-measurement-2d"
 						icon-start="measure"
-						id="arcgis-distance-measurement-2d"
 						label="Distance Measurement 2D">Distance Measurement 2D</calcite-dropdown-item
 					>
-					<calcite-dropdown-item icon-start="pencil" id="arcgis-editor" label="Editor"
+					<calcite-dropdown-item data-component="arcgis-editor" icon-start="pencil" label="Editor"
 						>Editor</calcite-dropdown-item
 					>
-					<calcite-dropdown-item icon-start="home" id="arcgis-home" label="Home"
+					<calcite-dropdown-item data-component="arcgis-home" icon-start="home" label="Home"
 						>Home</calcite-dropdown-item
 					>
-					<calcite-dropdown-item icon-start="layers" id="arcgis-layer-list" label="Layer List"
-						>Layer List</calcite-dropdown-item
+					<calcite-dropdown-item
+						data-component="arcgis-layer-list"
+						icon-start="layers"
+						label="Layer List">Layer List</calcite-dropdown-item
 					>
-					<calcite-dropdown-item icon-start="legend" id="arcgis-legend" label="Legend"
+					<calcite-dropdown-item data-component="arcgis-legend" icon-start="legend" label="Legend"
 						>Legend</calcite-dropdown-item
+					>
+					<calcite-dropdown-item data-component="arcgis-locate" icon-start="gps-on" label="Locate"
+						>Locate</calcite-dropdown-item
 					>
 				</calcite-dropdown-group>
 			</calcite-dropdown>
@@ -202,42 +214,46 @@
 						on:keypress={() => (selectedItem = selectedItems[index])}
 						tabindex="0"
 						role="button"
-						active={item.id === selectedItem?.id ? true : undefined}
+						active={item.dataset.component === selectedItem?.dataset.component ? true : undefined}
 						icon={item.iconStart}
 						text={item.label}
 					/>
 				{/each}
 			</calcite-action-bar>
 			<div>
-				{#if selectedItem?.id === 'arcgis-area-measurement-2d'}
-					<arcgis-area-measurement-2d reference-element="arcgis-map"></arcgis-area-measurement-2d>
-				{:else if selectedItem?.id === 'arcgis-basemap-gallery'}
-					<arcgis-basemap-gallery reference-element="arcgis-map"></arcgis-basemap-gallery>
-				{:else if selectedItem?.id === 'arcgis-basemap-layer-list'}
-					<arcgis-basemap-layer-list reference-element="arcgis-map"></arcgis-basemap-layer-list>
-				{:else if selectedItem?.id === 'arcgis-basemap-toggle'}
-					<arcgis-basemap-toggle reference-element="arcgis-map"></arcgis-basemap-toggle>
-				{:else if selectedItem?.id === 'arcgis-bookmarks'}
-					<arcgis-bookmarks reference-element="arcgis-map"></arcgis-bookmarks>
-				{:else if selectedItem?.id === 'arcgis-compass'}
-					<arcgis-compass reference-element="arcgis-map"></arcgis-compass>
-				{:else if selectedItem?.id === 'arcgis-coordinate-conversion'}
-					<arcgis-coordinate-conversion reference-element="arcgis-map"
-					></arcgis-coordinate-conversion>
-				{:else if selectedItem?.id === 'arcgis-directional-pad'}
-					<arcgis-directional-pad reference-element="arcgis-map"></arcgis-directional-pad>
-				{:else if selectedItem?.id === 'arcgis-distance-measurement-2d'}
-					<arcgis-distance-measurement-2d reference-element="arcgis-map"
-					></arcgis-distance-measurement-2d>
-				{:else if selectedItem?.id === 'arcgis-editor'}
-					<arcgis-editor on:arcgisReady={handleArcgisReadyEditor} reference-element="arcgis-map"
-					></arcgis-editor>
-				{:else if selectedItem?.id === 'arcgis-home'}
-					<arcgis-home reference-element="arcgis-map"></arcgis-home>
-				{:else if selectedItem?.id === 'arcgis-layer-list'}
-					<arcgis-layer-list reference-element="arcgis-map"></arcgis-layer-list>
-				{:else if selectedItem?.id === 'arcgis-legend'}
-					<arcgis-legend reference-element="arcgis-map"></arcgis-legend>
+				{#if selectedItem}
+					{#if selectedItem.dataset.component === 'arcgis-area-measurement-2d'}
+						<arcgis-area-measurement-2d reference-element="arcgis-map"></arcgis-area-measurement-2d>
+					{:else if selectedItem.dataset.component === 'arcgis-basemap-gallery'}
+						<arcgis-basemap-gallery reference-element="arcgis-map"></arcgis-basemap-gallery>
+					{:else if selectedItem.dataset.component === 'arcgis-basemap-layer-list'}
+						<arcgis-basemap-layer-list reference-element="arcgis-map"></arcgis-basemap-layer-list>
+					{:else if selectedItem.dataset.component === 'arcgis-basemap-toggle'}
+						<arcgis-basemap-toggle reference-element="arcgis-map"></arcgis-basemap-toggle>
+					{:else if selectedItem.dataset.component === 'arcgis-bookmarks'}
+						<arcgis-bookmarks reference-element="arcgis-map"></arcgis-bookmarks>
+					{:else if selectedItem.dataset.component === 'arcgis-compass'}
+						<arcgis-compass reference-element="arcgis-map"></arcgis-compass>
+					{:else if selectedItem.dataset.component === 'arcgis-coordinate-conversion'}
+						<arcgis-coordinate-conversion reference-element="arcgis-map"
+						></arcgis-coordinate-conversion>
+					{:else if selectedItem.dataset.component === 'arcgis-directional-pad'}
+						<arcgis-directional-pad reference-element="arcgis-map"></arcgis-directional-pad>
+					{:else if selectedItem.dataset.component === 'arcgis-distance-measurement-2d'}
+						<arcgis-distance-measurement-2d reference-element="arcgis-map"
+						></arcgis-distance-measurement-2d>
+					{:else if selectedItem.dataset.component === 'arcgis-editor'}
+						<arcgis-editor on:arcgisReady={handleArcgisReadyEditor} reference-element="arcgis-map"
+						></arcgis-editor>
+					{:else if selectedItem.dataset.component === 'arcgis-home'}
+						<arcgis-home reference-element="arcgis-map"></arcgis-home>
+					{:else if selectedItem.dataset.component === 'arcgis-layer-list'}
+						<arcgis-layer-list reference-element="arcgis-map"></arcgis-layer-list>
+					{:else if selectedItem.dataset.component === 'arcgis-legend'}
+						<arcgis-legend reference-element="arcgis-map"></arcgis-legend>
+					{:else if selectedItem.dataset.component === 'arcgis-locate'}
+						<arcgis-locate reference-element="arcgis-map"></arcgis-locate>
+					{/if}
 				{/if}
 			</div>
 		</calcite-shell-panel>
