@@ -2,12 +2,14 @@
 	import '@arcgis/core/assets/esri/themes/light/main.css';
 	import type Point from '@arcgis/core/geometry/Point';
 	import FeatureLayer from '@arcgis/core/layers/FeatureLayer';
+	import type Layer from '@arcgis/core/layers/Layer';
 	import type LayerView from '@arcgis/core/views/layers/LayerView';
 	import '@esri/calcite-components/dist/calcite/calcite.css';
 	import { onMount } from 'svelte';
 
-	let arcgisMap: HTMLArcgisMapElement | null = null;
+	let arcgisMapComponent: HTMLArcgisMapElement | null = null;
 	let center: Point;
+	let censusTrackLayer: FeatureLayer;
 	let mounted = false;
 	let selectedItem: HTMLCalciteDropdownItemElement | null = null;
 	let selectedItems: HTMLCalciteDropdownItemElement[] = [];
@@ -36,27 +38,29 @@
 	});
 
 	function handleArcgisReadyEditor() {
-		const mapComponent = document.querySelector('arcgis-map');
+		const featureLayerIds = arcgisMapComponent?.layerViews.map((layerView: LayerView) => {
+			if (layerView.layer.type === 'feature') {
+				return (layerView.layer as FeatureLayer).portalItem.id;
+			}
+		});
 
-		if (mapComponent) {
-			const featureLayerIds = mapComponent.layerViews.map((layerView: LayerView) => {
-				if (layerView.layer.type === 'feature') {
-					return (layerView.layer as FeatureLayer).portalItem.id;
-				}
-			});
+		const editableLayerIds = [
+			'7252a8de226f4b039169b4a85ec5f1a6',
+			'fa80bf61cd6349809c5bcab757ad4873',
+			'1eb67a37df674ed9857ffdf4113eff8e'
+		];
 
-			const editableLayerIds = [
-				'7252a8de226f4b039169b4a85ec5f1a6',
-				'fa80bf61cd6349809c5bcab757ad4873',
-				'1eb67a37df674ed9857ffdf4113eff8e'
-			];
+		editableLayerIds.forEach((id) => {
+			if (!featureLayerIds.includes(id)) {
+				arcgisMapComponent?.addLayer(new FeatureLayer({ portalItem: { id } }));
+			}
+		});
+	}
 
-			editableLayerIds.forEach((id) => {
-				if (!featureLayerIds.includes(id)) {
-					mapComponent.addLayer(new FeatureLayer({ portalItem: { id } }));
-				}
-			});
-		}
+	async function handleArcgisReadyScaleRangeSlider(event: {
+		target: HTMLArcgisScaleRangeSliderElement;
+	}) {
+		event.target.layer = censusTrackLayer;
 	}
 
 	function handleArcgisViewChange(event: CustomEvent) {
@@ -64,7 +68,11 @@
 	}
 
 	function handleArcgisViewReadyChange(event: CustomEvent) {
-		arcgisMap = event.target as HTMLArcgisMapElement;
+		arcgisMapComponent = event.target as HTMLArcgisMapElement;
+
+		censusTrackLayer = arcgisMapComponent.map.layers.find(
+			(layer: Layer) => layer.title === 'Census Tracts'
+		) as FeatureLayer;
 	}
 
 	function handleOnCalciteDropdownSelect(event: { target: HTMLCalciteDropdownElement }) {
@@ -121,6 +129,9 @@
 					case 'arcgis-scale-bar':
 						await import('@arcgis/map-components/dist/components/arcgis-scale-bar');
 						break;
+					case 'arcgis-scale-range-slider':
+						await import('@arcgis/map-components/dist/components/arcgis-scale-range-slider');
+						break;
 					default:
 						break;
 				}
@@ -133,11 +144,11 @@
 	<calcite-shell>
 		<calcite-navigation slot="header">
 			<calcite-navigation-logo
-				description={arcgisMap?.map.portalItem.snippet}
-				heading={arcgisMap?.map.portalItem.title}
+				description={arcgisMapComponent?.map.portalItem.snippet}
+				heading={arcgisMapComponent?.map.portalItem.title}
 				slot="logo"
-				thumbnail={arcgisMap?.map.portalItem.thumbnailUrl}
-				href={arcgisMap?.map.portalItem.itemPageUrl}
+				thumbnail={arcgisMapComponent?.map.portalItem.thumbnailUrl}
+				href={arcgisMapComponent?.map.portalItem.itemPageUrl}
 				label="Thumbnail of map"
 			/>
 			<calcite-dropdown
@@ -217,6 +228,11 @@
 						icon-start="actual-size"
 						label="Scale Bar">Scale Bar</calcite-dropdown-item
 					>
+					<calcite-dropdown-item
+						data-component="arcgis-scale-range-slider"
+						icon-start="select-range"
+						label="Scale Range Slider">Scale Range Slider</calcite-dropdown-item
+					>
 				</calcite-dropdown-group>
 			</calcite-dropdown>
 		</calcite-navigation>
@@ -271,6 +287,11 @@
 						<arcgis-print reference-element="arcgis-map"></arcgis-print>
 					{:else if selectedItem.dataset.component === 'arcgis-scale-bar'}
 						<arcgis-scale-bar reference-element="arcgis-map"></arcgis-scale-bar>
+					{:else if selectedItem.dataset.component === 'arcgis-scale-range-slider'}
+						<arcgis-scale-range-slider
+							on:arcgisReady={handleArcgisReadyScaleRangeSlider}
+							reference-element="arcgis-map"
+						></arcgis-scale-range-slider>
 					{/if}
 				{/if}
 			</div>
@@ -293,7 +314,9 @@
 {/if}
 
 <style>
-	:global(.esri-coordinate-conversion.esri-widget) {
+	:global(.esri-coordinate-conversion, .esri-scale-range-slider) {
+		max-width: 100%;
+		min-width: 100%;
 		width: 100%;
 	}
 	arcgis-map {
