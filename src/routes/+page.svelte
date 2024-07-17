@@ -159,85 +159,117 @@
 				on:calciteDropdownSelect={handleOnCalciteDropdownSelect}
 				slot="content-end"
 			>
-				<calcite-button slot="trigger">Select Components</calcite-button>
+				<calcite-button data-testid="select-components" slot="trigger"
+					>Select Components</calcite-button
+				>
 				<calcite-dropdown-group selection-mode="multiple">
 					<calcite-dropdown-item
 						data-component="arcgis-area-measurement-2d"
+						data-testid="arcgis-area-measurement-2d-dropdown-item"
 						icon-start="measure-area"
 						label="Area Measurement 2D">Area Measurement 2D</calcite-dropdown-item
 					>
 					<calcite-dropdown-item
 						data-component="arcgis-basemap-gallery"
+						data-testid="arcgis-basemap-gallery-dropdown-item"
 						icon-start="basemap"
 						label="Basemap Gallery">Basemap Gallery</calcite-dropdown-item
 					>
 					<calcite-dropdown-item
 						data-component="arcgis-basemap-layer-list"
+						data-testid="arcgis-basemap-layer-list-dropdown-item"
 						icon-start="layer-basemap"
 						label="Basemap Layer List">Basemap Layer List</calcite-dropdown-item
 					>
 					<calcite-dropdown-item
 						data-component="arcgis-basemap-toggle"
+						data-testid="arcgis-basemap-toggle-dropdown-item"
 						icon-start="toggle"
 						label="Basemap Toggle">Basemap Toggle</calcite-dropdown-item
 					>
 					<calcite-dropdown-item
 						data-component="arcgis-bookmarks"
+						data-testid="arcgis-bookmarks-dropdown-item"
 						icon-start="bookmark"
 						label="Bookmarks">Bookmarks</calcite-dropdown-item
 					>
 					<calcite-dropdown-item
 						data-component="arcgis-compass"
+						data-testid="arcgis-compass-dropdown-item"
 						icon-start="compass"
 						label="Compass">Compass</calcite-dropdown-item
 					>
 					<calcite-dropdown-item
 						data-component="arcgis-coordinate-conversion"
+						data-testid="arcgis-coordinate-conversion-dropdown-item"
 						icon-start="coordinate-system"
 						label="Coordinate Conversion">Coordinate Conversion</calcite-dropdown-item
 					>
 					<calcite-dropdown-item
 						data-component="arcgis-directional-pad"
+						data-testid="arcgis-directional-pad-dropdown-item"
 						icon-start="move"
 						label="Directional Pad">Directional Pad</calcite-dropdown-item
 					>
 					<calcite-dropdown-item
 						data-component="arcgis-distance-measurement-2d"
+						data-testid="arcgis-distance-measurement-2d-dropdown-item"
 						icon-start="measure"
 						label="Distance Measurement 2D">Distance Measurement 2D</calcite-dropdown-item
 					>
-					<calcite-dropdown-item data-component="arcgis-editor" icon-start="pencil" label="Editor"
-						>Editor</calcite-dropdown-item
+					<calcite-dropdown-item
+						data-component="arcgis-editor"
+						data-testid="arcgis-editor-dropdown-item"
+						icon-start="pencil"
+						label="Editor">Editor</calcite-dropdown-item
 					>
-					<calcite-dropdown-item data-component="arcgis-home" icon-start="home" label="Home"
-						>Home</calcite-dropdown-item
+					<calcite-dropdown-item
+						data-component="arcgis-home"
+						data-testid="arcgis-home-dropdown-item"
+						icon-start="home"
+						label="Home">Home</calcite-dropdown-item
 					>
 					<calcite-dropdown-item
 						data-component="arcgis-layer-list"
+						data-testid="arcgis-layer-list-dropdown-item"
 						icon-start="layers"
 						label="Layer List">Layer List</calcite-dropdown-item
 					>
-					<calcite-dropdown-item data-component="arcgis-legend" icon-start="legend" label="Legend"
-						>Legend</calcite-dropdown-item
+					<calcite-dropdown-item
+						data-component="arcgis-legend"
+						data-testid="arcgis-legend-dropdown-item"
+						icon-start="legend"
+						label="Legend">Legend</calcite-dropdown-item
 					>
-					<calcite-dropdown-item data-component="arcgis-locate" icon-start="gps-on" label="Locate"
-						>Locate</calcite-dropdown-item
+					<calcite-dropdown-item
+						data-component="arcgis-locate"
+						data-testid="arcgis-locate-dropdown-item"
+						icon-start="gps-on"
+						label="Locate">Locate</calcite-dropdown-item
 					>
-					<calcite-dropdown-item data-component="arcgis-print" icon-start="print" label="Print"
-						>Print</calcite-dropdown-item
+					<calcite-dropdown-item
+						data-component="arcgis-print"
+						data-testid="arcgis-print-dropdown-item"
+						icon-start="print"
+						label="Print">Print</calcite-dropdown-item
 					>
 					<calcite-dropdown-item
 						data-component="arcgis-scale-bar"
+						data-testid="arcgis-scale-bar-dropdown-item"
 						icon-start="actual-size"
 						label="Scale Bar">Scale Bar</calcite-dropdown-item
 					>
 					<calcite-dropdown-item
 						data-component="arcgis-scale-range-slider"
+						data-testid="arcgis-scale-range-slider-dropdown-item"
 						icon-start="select-range"
 						label="Scale Range Slider">Scale Range Slider</calcite-dropdown-item
 					>
-					<calcite-dropdown-item data-component="arcgis-search" icon-start="search" label="Search"
-						>Search</calcite-dropdown-item
+					<calcite-dropdown-item
+						data-component="arcgis-search"
+						data-testid="arcgis-search-dropdown-item"
+						icon-start="search"
+						label="Search">Search</calcite-dropdown-item
 					>
 				</calcite-dropdown-group>
 			</calcite-dropdown>
@@ -246,6 +278,7 @@
 			<calcite-action-bar slot="action-bar">
 				{#each selectedItems as item, index}
 					<calcite-action
+						data-testid={`${item.dataset.testid}-action`}
 						on:click={() => (selectedItem = selectedItems[index])}
 						on:keypress={() => (selectedItem = selectedItems[index])}
 						tabindex="0"
@@ -259,47 +292,85 @@
 			<div>
 				{#if selectedItem}
 					{#if selectedItem.dataset.component === 'arcgis-area-measurement-2d'}
-						<arcgis-area-measurement-2d reference-element="arcgis-map"></arcgis-area-measurement-2d>
+						<arcgis-area-measurement-2d
+							data-testid="arcgis-area-measurement-2d-component"
+							reference-element="arcgis-map"
+						></arcgis-area-measurement-2d>
 					{:else if selectedItem.dataset.component === 'arcgis-basemap-gallery'}
-						<arcgis-basemap-gallery reference-element="arcgis-map"></arcgis-basemap-gallery>
+						<arcgis-basemap-gallery
+							data-testid="arcgis-basemap-gallery-component"
+							reference-element="arcgis-map"
+						></arcgis-basemap-gallery>
 					{:else if selectedItem.dataset.component === 'arcgis-basemap-layer-list'}
-						<arcgis-basemap-layer-list reference-element="arcgis-map"></arcgis-basemap-layer-list>
+						<arcgis-basemap-layer-list
+							data-testid="arcgis-basemap-layer-list-component"
+							reference-element="arcgis-map"
+						></arcgis-basemap-layer-list>
 					{:else if selectedItem.dataset.component === 'arcgis-basemap-toggle'}
-						<arcgis-basemap-toggle reference-element="arcgis-map"></arcgis-basemap-toggle>
+						<arcgis-basemap-toggle
+							data-testid="arcgis-basemap-toggle-component"
+							reference-element="arcgis-map"
+						></arcgis-basemap-toggle>
 					{:else if selectedItem.dataset.component === 'arcgis-bookmarks'}
-						<arcgis-bookmarks reference-element="arcgis-map"></arcgis-bookmarks>
+						<arcgis-bookmarks
+							data-testid="arcgis-bookmarks-component"
+							reference-element="arcgis-map"
+						></arcgis-bookmarks>
 					{:else if selectedItem.dataset.component === 'arcgis-compass'}
-						<arcgis-compass reference-element="arcgis-map"></arcgis-compass>
+						<arcgis-compass data-testid="arcgis-compass-component" reference-element="arcgis-map"
+						></arcgis-compass>
 					{:else if selectedItem.dataset.component === 'arcgis-coordinate-conversion'}
-						<arcgis-coordinate-conversion reference-element="arcgis-map"
+						<arcgis-coordinate-conversion
+							data-testid="arcgis-coordinate-conversion-component"
+							reference-element="arcgis-map"
 						></arcgis-coordinate-conversion>
 					{:else if selectedItem.dataset.component === 'arcgis-directional-pad'}
-						<arcgis-directional-pad reference-element="arcgis-map"></arcgis-directional-pad>
+						<arcgis-directional-pad
+							data-testid="arcgis-directional-pad-component"
+							reference-element="arcgis-map"
+						></arcgis-directional-pad>
 					{:else if selectedItem.dataset.component === 'arcgis-distance-measurement-2d'}
-						<arcgis-distance-measurement-2d reference-element="arcgis-map"
+						<arcgis-distance-measurement-2d
+							data-testid="arcgis-distance-measurement-2d-component"
+							reference-element="arcgis-map"
 						></arcgis-distance-measurement-2d>
 					{:else if selectedItem.dataset.component === 'arcgis-editor'}
-						<arcgis-editor on:arcgisReady={handleArcgisReadyEditor} reference-element="arcgis-map"
+						<arcgis-editor
+							data-testid="arcgis-editor-component"
+							on:arcgisReady={handleArcgisReadyEditor}
+							reference-element="arcgis-map"
 						></arcgis-editor>
 					{:else if selectedItem.dataset.component === 'arcgis-home'}
-						<arcgis-home reference-element="arcgis-map"></arcgis-home>
+						<arcgis-home data-testid="arcgis-home-component" reference-element="arcgis-map"
+						></arcgis-home>
 					{:else if selectedItem.dataset.component === 'arcgis-layer-list'}
-						<arcgis-layer-list reference-element="arcgis-map"></arcgis-layer-list>
+						<arcgis-layer-list
+							data-testid="arcgis-layer-list-component"
+							reference-element="arcgis-map"
+						></arcgis-layer-list>
 					{:else if selectedItem.dataset.component === 'arcgis-legend'}
-						<arcgis-legend reference-element="arcgis-map"></arcgis-legend>
+						<arcgis-legend data-testid="arcgis-legend-component" reference-element="arcgis-map"
+						></arcgis-legend>
 					{:else if selectedItem.dataset.component === 'arcgis-locate'}
-						<arcgis-locate reference-element="arcgis-map"></arcgis-locate>
+						<arcgis-locate data-testid="arcgis-locate-component" reference-element="arcgis-map"
+						></arcgis-locate>
 					{:else if selectedItem.dataset.component === 'arcgis-print'}
-						<arcgis-print reference-element="arcgis-map"></arcgis-print>
+						<arcgis-print data-testid="arcgis-print-component" reference-element="arcgis-map"
+						></arcgis-print>
 					{:else if selectedItem.dataset.component === 'arcgis-scale-bar'}
-						<arcgis-scale-bar reference-element="arcgis-map"></arcgis-scale-bar>
+						<arcgis-scale-bar
+							data-testid="arcgis-scale-bar-component"
+							reference-element="arcgis-map"
+						></arcgis-scale-bar>
 					{:else if selectedItem.dataset.component === 'arcgis-scale-range-slider'}
 						<arcgis-scale-range-slider
+							data-testid="arcgis-scale-range-slider-component"
 							on:arcgisReady={handleArcgisReadyScaleRangeSlider}
 							reference-element="arcgis-map"
 						></arcgis-scale-range-slider>
 					{:else if selectedItem.dataset.component === 'arcgis-search'}
-						<arcgis-search reference-element="arcgis-map"></arcgis-search>
+						<arcgis-search data-testid="arcgis-search-component" reference-element="arcgis-map"
+						></arcgis-search>
 					{/if}
 				{/if}
 			</div>

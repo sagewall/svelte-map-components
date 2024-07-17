@@ -15,7 +15,11 @@ export default [
 		languageOptions: {
 			globals: {
 				...globals.browser,
-				...globals.node
+				...globals.node,
+				HTMLArcgisMapElement: 'readonly',
+				HTMLCalciteDropdownElement: 'readonly',
+				HTMLCalciteDropdownItemElement: 'readonly',
+				HTMLArcgisScaleRangeSliderElement: 'readonly'
 			}
 		}
 	},
@@ -28,6 +32,11 @@ export default [
 		}
 	},
 	{
-		ignores: ['build/', '.svelte-kit/', 'dist/']
+		ignores: ['build/', '.svelte-kit/', 'dist/', '.netlify/']
+	},
+	{
+		rules: {
+			'no-undef': 'warn'
+		}
 	}
 ];
