@@ -71,6 +71,9 @@
 					case 'arcgis-directional-pad':
 						await import('@arcgis/map-components/dist/components/arcgis-directional-pad');
 						break;
+					case 'arcgis-distance-measurement-2d':
+						await import('@arcgis/map-components/dist/components/arcgis-distance-measurement-2d');
+						break;
 					case 'arcgis-layer-list':
 						await import('@arcgis/map-components/dist/components/arcgis-layer-list');
 						break;
@@ -139,6 +142,11 @@
 						id="arcgis-directional-pad"
 						label="Directional Pad">Directional Pad</calcite-dropdown-item
 					>
+					<calcite-dropdown-item
+						icon-start="move"
+						id="arcgis-distance-measurement-2d"
+						label="Distance Measurement 2D">Distance Measurement 2D</calcite-dropdown-item
+					>
 					<calcite-dropdown-item icon-start="layers" id="arcgis-layer-list" label="Layer List"
 						>Layer List</calcite-dropdown-item
 					>
@@ -180,6 +188,9 @@
 					></arcgis-coordinate-conversion>
 				{:else if selectedItem?.id === 'arcgis-directional-pad'}
 					<arcgis-directional-pad reference-element="arcgis-map"></arcgis-directional-pad>
+				{:else if selectedItem?.id === 'arcgis-distance-measurement-2d'}
+					<arcgis-distance-measurement-2d reference-element="arcgis-map"
+					></arcgis-distance-measurement-2d>
 				{:else if selectedItem?.id === 'arcgis-layer-list'}
 					<arcgis-layer-list reference-element="arcgis-map"></arcgis-layer-list>
 				{:else if selectedItem?.id === 'arcgis-legend'}
