@@ -115,6 +115,9 @@
 					case 'arcgis-locate':
 						await import('@arcgis/map-components/dist/components/arcgis-locate');
 						break;
+					case 'arcgis-print':
+						await import('@arcgis/map-components/dist/components/arcgis-print');
+						break;
 					default:
 						break;
 				}
@@ -203,6 +206,9 @@
 					<calcite-dropdown-item data-component="arcgis-locate" icon-start="gps-on" label="Locate"
 						>Locate</calcite-dropdown-item
 					>
+					<calcite-dropdown-item data-component="arcgis-print" icon-start="print" label="Print"
+						>Print</calcite-dropdown-item
+					>
 				</calcite-dropdown-group>
 			</calcite-dropdown>
 		</calcite-navigation>
@@ -253,6 +259,8 @@
 						<arcgis-legend reference-element="arcgis-map"></arcgis-legend>
 					{:else if selectedItem.dataset.component === 'arcgis-locate'}
 						<arcgis-locate reference-element="arcgis-map"></arcgis-locate>
+					{:else if selectedItem.dataset.component === 'arcgis-print'}
+						<arcgis-print reference-element="arcgis-map"></arcgis-print>
 					{/if}
 				{/if}
 			</div>
