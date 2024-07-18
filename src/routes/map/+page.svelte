@@ -182,6 +182,9 @@
 					case 'arcgis-time-slider':
 						await import('@arcgis/map-components/dist/components/arcgis-time-slider');
 						break;
+					case 'arcgis-track':
+						await import('@arcgis/map-components/dist/components/arcgis-track');
+						break;
 					default:
 						break;
 				}
@@ -342,6 +345,12 @@
 						icon-start="clock"
 						label="Time Slider">Time Slider</calcite-dropdown-item
 					>
+					<calcite-dropdown-item
+						data-component="arcgis-track"
+						data-testid="arcgis-track-dropdown-item"
+						icon-start="compass-north-circle"
+						label="Track">Track</calcite-dropdown-item
+					>
 				</calcite-dropdown-group>
 			</calcite-dropdown>
 		</calcite-navigation>
@@ -464,6 +473,9 @@
 							on:arcgisReady={handleArcgisReadyTimeSlider}
 							reference-element="arcgis-map"
 						></arcgis-time-slider>
+					{:else if selectedItem.dataset.component === 'arcgis-track'}
+						<arcgis-track data-testid="arcgis-track-component" reference-element="arcgis-map"
+						></arcgis-track>
 					{/if}
 				{/if}
 			</div>
