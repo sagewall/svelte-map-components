@@ -130,6 +130,9 @@
 					case 'arcgis-search':
 						await import('@arcgis/map-components/dist/components/arcgis-search');
 						break;
+					case 'arcgis-sketch':
+						await import('@arcgis/map-components/dist/components/arcgis-sketch');
+						break;
 					default:
 						break;
 				}
@@ -148,7 +151,7 @@
 				thumbnail={arcgisMapComponent?.map.portalItem.thumbnailUrl}
 				href={arcgisMapComponent?.map.portalItem.itemPageUrl}
 				label="Thumbnail of map"
-			/>
+			></calcite-navigation-logo>
 			<calcite-dropdown
 				close-on-select-disabled
 				on:calciteDropdownSelect={handleOnCalciteDropdownSelect}
@@ -266,6 +269,12 @@
 						icon-start="search"
 						label="Search">Search</calcite-dropdown-item
 					>
+					<calcite-dropdown-item
+						data-component="arcgis-sketch"
+						data-testid="arcgis-sketch-dropdown-item"
+						icon-start="annotate-tool"
+						label="Sketch">Sketch</calcite-dropdown-item
+					>
 				</calcite-dropdown-group>
 			</calcite-dropdown>
 		</calcite-navigation>
@@ -366,6 +375,9 @@
 					{:else if selectedItem.dataset.component === 'arcgis-search'}
 						<arcgis-search data-testid="arcgis-search-component" reference-element="arcgis-map"
 						></arcgis-search>
+					{:else if selectedItem.dataset.component === 'arcgis-sketch'}
+						<arcgis-sketch data-testid="arcgis-sketch-component" reference-element="arcgis-map"
+						></arcgis-sketch>
 					{/if}
 				{/if}
 			</div>
