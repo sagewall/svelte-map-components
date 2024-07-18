@@ -76,6 +76,28 @@
 		});
 	}
 
+	async function handleArcgisReadyTimeSlider(event: { target: HTMLArcgisTimeSliderElement }) {
+		const featureLayerUrls = arcgisMapComponent?.map.layers.map((layer: Layer) => {
+			if (layer.type === 'feature') {
+				return (layer as FeatureLayer).url;
+			}
+		});
+
+		const url =
+			'https://services9.arcgis.com/RHVPKKiFTONKtxq3/arcgis/rest/services/NDFD_Precipitation_v1/FeatureServer/0';
+
+		if (!featureLayerUrls?.includes(url)) {
+			const featureLayer = new FeatureLayer({ url });
+			arcgisMapComponent?.addLayer(featureLayer);
+
+			await featureLayer.load();
+			event.target.fullTimeExtent = featureLayer.timeInfo.fullTimeExtent;
+			event.target.stops = {
+				interval: featureLayer.timeInfo.interval
+			};
+		}
+	}
+
 	function handleArcgisViewChange(event: CustomEvent) {
 		center = (event.target as HTMLArcgisMapElement).center;
 	}
@@ -156,6 +178,9 @@
 						break;
 					case 'arcgis-table-list':
 						await import('@arcgis/map-components/dist/components/arcgis-table-list');
+						break;
+					case 'arcgis-time-slider':
+						await import('@arcgis/map-components/dist/components/arcgis-time-slider');
 						break;
 					default:
 						break;
@@ -311,6 +336,12 @@
 						icon-start="tables"
 						label="Table List">Table List</calcite-dropdown-item
 					>
+					<calcite-dropdown-item
+						data-component="arcgis-time-slider"
+						data-testid="arcgis-time-slider-dropdown-item"
+						icon-start="clock"
+						label="Time Slider">Time Slider</calcite-dropdown-item
+					>
 				</calcite-dropdown-group>
 			</calcite-dropdown>
 		</calcite-navigation>
@@ -426,6 +457,13 @@
 							on:arcgisReady={handleArcgisReadyTableList}
 							reference-element="arcgis-map"
 						></arcgis-table-list>
+					{:else if selectedItem.dataset.component === 'arcgis-time-slider'}
+						<arcgis-time-slider
+							data-testid="arcgis-time-slider-component"
+							loop
+							on:arcgisReady={handleArcgisReadyTimeSlider}
+							reference-element="arcgis-map"
+						></arcgis-time-slider>
 					{/if}
 				{/if}
 			</div>
@@ -448,7 +486,7 @@
 {/if}
 
 <style>
-	:global(.esri-coordinate-conversion, .esri-scale-range-slider) {
+	:global(.esri-coordinate-conversion, .esri-scale-range-slider, .esri-time-slider) {
 		max-width: 100%;
 		min-width: 100%;
 		width: 100%;
