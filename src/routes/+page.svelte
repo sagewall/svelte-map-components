@@ -36,6 +36,14 @@
 				<calcite-link href="/map" slot="description">Add components to a map</calcite-link>
 			</calcite-card>
 
+			<calcite-card label="Utility Network Components">
+				<arcgis-map item-id="d5dda743788a4b0688fe48f43ae7beb9" slot="thumbnail"></arcgis-map>
+				<span slot="heading">Utility Network Components</span>
+				<calcite-link href="/utility-network" slot="description"
+					>Add Utility Network components to a map</calcite-link
+				>
+			</calcite-card>
+
 			<calcite-card label="Scene Components">
 				<arcgis-scene item-id="adfad6ee6c6043238ea64e121bb6429a" slot="thumbnail"></arcgis-scene>
 				<span slot="heading">Scene Components (Coming soon!)</span>

@@ -1,11 +1,11 @@
 import { expect, test } from '@playwright/test';
 
-test('home route has expected map', async ({ page }) => {
-	await page.goto('/');
+test('map route has expected map', async ({ page }) => {
+	await page.goto('/map');
 	await expect(page.locator('arcgis-map')).toBeVisible();
 });
 
-test('map route has expected map', async ({ page }) => {
-	await page.goto('/map');
+test('utility-network route has expected map', async ({ page }) => {
+	await page.goto('/utility-network');
 	await expect(page.locator('arcgis-map')).toBeVisible();
 });

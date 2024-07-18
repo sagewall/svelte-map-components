@@ -1,0 +1,141 @@
+<script lang="ts">
+	import type Point from '@arcgis/core/geometry/Point';
+	import { onMount } from 'svelte';
+
+	let arcgisMapComponent: HTMLArcgisMapElement | null = null;
+	let center: Point;
+	let mounted = false;
+	let selectedItem: HTMLCalciteDropdownItemElement | null = null;
+	let selectedItems: HTMLCalciteDropdownItemElement[] = [];
+
+	$: latitude = center?.latitude.toFixed(2);
+	$: longitude = center?.longitude.toFixed(2);
+
+	onMount(async () => {
+		await import('@arcgis/map-components/dist/components/arcgis-map');
+		await import('@esri/calcite-components/dist/components/calcite-action');
+		await import('@esri/calcite-components/dist/components/calcite-action-bar');
+		await import('@esri/calcite-components/dist/components/calcite-button');
+		await import('@esri/calcite-components/dist/components/calcite-dropdown');
+		await import('@esri/calcite-components/dist/components/calcite-dropdown-group');
+		await import('@esri/calcite-components/dist/components/calcite-dropdown-item');
+		await import('@esri/calcite-components/dist/components/calcite-navigation');
+		await import('@esri/calcite-components/dist/components/calcite-navigation-logo');
+		await import('@esri/calcite-components/dist/components/calcite-shell');
+		await import('@esri/calcite-components/dist/components/calcite-shell-center-row');
+		await import('@esri/calcite-components/dist/components/calcite-shell-panel');
+
+		mounted = true;
+	});
+
+	function handleArcgisViewChange(event: CustomEvent) {
+		center = (event.target as HTMLArcgisMapElement).center;
+	}
+
+	function handleArcgisViewReadyChange(event: CustomEvent) {
+		arcgisMapComponent = event.target as HTMLArcgisMapElement;
+	}
+
+	function handleOnCalciteDropdownSelect(event: { target: HTMLCalciteDropdownElement }) {
+		if (event.target) {
+			selectedItems = event.target.selectedItems;
+
+			selectedItems.forEach(async (item) => {
+				switch (item.dataset.component) {
+					case 'arcgis-utility-network-associations':
+						await import(
+							'@arcgis/map-components/dist/components/arcgis-utility-network-associations'
+						);
+						break;
+					default:
+						break;
+				}
+			});
+		}
+	}
+</script>
+
+{#if mounted}
+	<calcite-shell>
+		<calcite-navigation slot="header">
+			<calcite-navigation-logo
+				description={arcgisMapComponent?.map.portalItem.snippet.split('.')[0]}
+				heading={arcgisMapComponent?.map.portalItem.title}
+				href={arcgisMapComponent?.map.portalItem.itemPageUrl}
+				label="Thumbnail of map"
+				slot="logo"
+				thumbnail={arcgisMapComponent?.map.portalItem.thumbnailUrl}
+			></calcite-navigation-logo>
+			<calcite-dropdown
+				close-on-select-disabled
+				on:calciteDropdownSelect={handleOnCalciteDropdownSelect}
+				slot="content-end"
+			>
+				<calcite-button data-testid="select-components" slot="trigger"
+					>Select Components</calcite-button
+				>
+				<calcite-dropdown-group selection-mode="multiple">
+					<calcite-dropdown-item
+						data-component="arcgis-utility-network-associations"
+						data-testid="arcgis-utility-network-associations-dropdown-item"
+						icon-start="view-associations"
+						label="Utility Network Associations">Utility Network Associations</calcite-dropdown-item
+					>
+				</calcite-dropdown-group>
+			</calcite-dropdown>
+		</calcite-navigation>
+		<calcite-shell-panel slot="panel-start" position="start" resizable width-scale="l">
+			<calcite-action-bar slot="action-bar">
+				{#each selectedItems as item, index}
+					<calcite-action
+						data-testid={`${item.dataset.testid}-action`}
+						on:click={() => (selectedItem = selectedItems[index])}
+						on:keypress={() => (selectedItem = selectedItems[index])}
+						tabindex="0"
+						role="button"
+						active={item.dataset.component === selectedItem?.dataset.component ? true : undefined}
+						icon={item.iconStart}
+						text={item.label}
+					/>
+				{/each}
+			</calcite-action-bar>
+			<div>
+				{#if selectedItem}
+					{#if selectedItem.dataset.component === 'arcgis-utility-network-associations'}
+						<arcgis-utility-network-associations
+							data-testid="arcgis-utility-network-associations-component"
+							reference-element="arcgis-map"
+						></arcgis-utility-network-associations>
+					{/if}
+				{/if}
+			</div>
+		</calcite-shell-panel>
+		<arcgis-map
+			item-id="471eb0bf37074b1fbb972b1da70fb310"
+			on:arcgisViewChange={handleArcgisViewChange}
+			on:arcgisViewReadyChange={handleArcgisViewReadyChange}
+		>
+		</arcgis-map>
+		{#if center}
+			<shell-center-row>
+				<div>
+					Map Center: {longitude}° longitude {latitude}° latitude
+				</div>
+			</shell-center-row>
+		{/if}
+	</calcite-shell>
+{:else}
+	<p>Loading...</p>
+{/if}
+
+<style>
+	:global(.esri-un-associations__widget-container) {
+		max-width: 100%;
+		min-width: 100%;
+		width: 100%;
+	}
+
+	arcgis-map {
+		flex: 1;
+	}
+</style>
