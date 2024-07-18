@@ -118,6 +118,9 @@
 					case 'arcgis-directional-pad':
 						await import('@arcgis/map-components/dist/components/arcgis-directional-pad');
 						break;
+					case 'arcgis-directions':
+						await import('@arcgis/map-components/dist/components/arcgis-directions');
+						break;
 					case 'arcgis-distance-measurement-2d':
 						await import('@arcgis/map-components/dist/components/arcgis-distance-measurement-2d');
 						break;
@@ -229,6 +232,12 @@
 						data-testid="arcgis-directional-pad-dropdown-item"
 						icon-start="move"
 						label="Directional Pad">Directional Pad</calcite-dropdown-item
+					>
+					<calcite-dropdown-item
+						data-component="arcgis-directions"
+						data-testid="arcgis-directions-dropdown-item"
+						icon-start="fork-right"
+						label="Directions">Directions</calcite-dropdown-item
 					>
 					<calcite-dropdown-item
 						data-component="arcgis-distance-measurement-2d"
@@ -360,6 +369,12 @@
 							data-testid="arcgis-directional-pad-component"
 							reference-element="arcgis-map"
 						></arcgis-directional-pad>
+					{:else if selectedItem?.dataset.component === 'arcgis-directions'}
+						<arcgis-directions
+							api-key={import.meta.env.VITE_ARCGIS_API_KEY}
+							reference-element="arcgis-map"
+							use-default-route-layer
+						></arcgis-directions>
 					{:else if selectedItem.dataset.component === 'arcgis-distance-measurement-2d'}
 						<arcgis-distance-measurement-2d
 							data-testid="arcgis-distance-measurement-2d-component"
