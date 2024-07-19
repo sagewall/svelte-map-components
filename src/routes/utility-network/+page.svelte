@@ -47,6 +47,9 @@
 							'@arcgis/map-components/dist/components/arcgis-utility-network-associations'
 						);
 						break;
+					case 'arcgis-utility-network-trace':
+						await import('@arcgis/map-components/dist/components/arcgis-utility-network-trace');
+						break;
 					default:
 						break;
 				}
@@ -81,6 +84,12 @@
 						icon-start="view-associations"
 						label="Utility Network Associations">Utility Network Associations</calcite-dropdown-item
 					>
+					<calcite-dropdown-item
+						data-component="arcgis-utility-network-trace"
+						data-testid="arcgis-utility-network-trace-dropdown-item"
+						icon-start="trace"
+						label="Utility Network Trace">Utility Network Trace</calcite-dropdown-item
+					>
 				</calcite-dropdown-group>
 			</calcite-dropdown>
 		</calcite-navigation>
@@ -106,6 +115,11 @@
 							data-testid="arcgis-utility-network-associations-component"
 							reference-element="arcgis-map"
 						></arcgis-utility-network-associations>
+					{:else if selectedItem.dataset.component === 'arcgis-utility-network-trace'}
+						<arcgis-utility-network-trace
+							data-testid="arcgis-utility-network-trace-component"
+							reference-element="arcgis-map"
+						></arcgis-utility-network-trace>
 					{/if}
 				{/if}
 			</div>
