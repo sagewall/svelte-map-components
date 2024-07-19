@@ -55,6 +55,9 @@
 							'@arcgis/map-components/dist/components/arcgis-utility-network-validate-topology'
 						);
 						break;
+					case 'arcgis-version-management':
+						await import('@arcgis/map-components/dist/components/arcgis-version-management');
+						break;
 					default:
 						break;
 				}
@@ -102,6 +105,12 @@
 						label="Utility Network Validate Topology"
 						>Utility Network Validate Topology</calcite-dropdown-item
 					>
+					<calcite-dropdown-item
+						data-component="arcgis-version-management"
+						data-testid="arcgis-version-management-dropdown-item"
+						icon-start="code-branch"
+						label="Version Management">Version Management</calcite-dropdown-item
+					>
 				</calcite-dropdown-group>
 			</calcite-dropdown>
 		</calcite-navigation>
@@ -137,6 +146,11 @@
 							data-testid="arcgis-utility-network-validate-topology-component"
 							reference-element="arcgis-map"
 						></arcgis-utility-network-validate-topology>
+					{:else if selectedItem.dataset.component === 'arcgis-version-management'}
+						<arcgis-version-management
+							data-testid="arcgis-version-management-component"
+							reference-element="arcgis-map"
+						></arcgis-version-management>
 					{/if}
 				{/if}
 			</div>
