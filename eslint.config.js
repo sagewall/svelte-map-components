@@ -19,7 +19,8 @@ export default [
 				HTMLArcgisMapElement: 'readonly',
 				HTMLCalciteDropdownElement: 'readonly',
 				HTMLCalciteDropdownItemElement: 'readonly',
-				HTMLArcgisScaleRangeSliderElement: 'readonly'
+				HTMLArcgisScaleRangeSliderElement: 'readonly',
+				HTMLArcgisTimeSliderElement: 'readonly'
 			}
 		}
 	},
