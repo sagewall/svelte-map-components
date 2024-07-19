@@ -185,6 +185,9 @@
 					case 'arcgis-track':
 						await import('@arcgis/map-components/dist/components/arcgis-track');
 						break;
+					case 'arcgis-zoom':
+						await import('@arcgis/map-components/dist/components/arcgis-zoom');
+						break;
 					default:
 						break;
 				}
@@ -351,6 +354,12 @@
 						icon-start="compass-north-circle"
 						label="Track">Track</calcite-dropdown-item
 					>
+					<calcite-dropdown-item
+						data-component="arcgis-zoom"
+						data-testid="arcgis-zoom-dropdown-item"
+						icon-start="magnifying-glass-plus"
+						label="Zoom">Zoom</calcite-dropdown-item
+					>
 				</calcite-dropdown-group>
 			</calcite-dropdown>
 		</calcite-navigation>
@@ -476,6 +485,9 @@
 					{:else if selectedItem.dataset.component === 'arcgis-track'}
 						<arcgis-track data-testid="arcgis-track-component" reference-element="arcgis-map"
 						></arcgis-track>
+					{:else if selectedItem.dataset.component === 'arcgis-zoom'}
+						<arcgis-zoom data-testid="arcgis-zoom-component" reference-element="arcgis-map"
+						></arcgis-zoom>
 					{/if}
 				{/if}
 			</div>
