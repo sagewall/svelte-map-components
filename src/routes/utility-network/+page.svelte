@@ -50,6 +50,11 @@
 					case 'arcgis-utility-network-trace':
 						await import('@arcgis/map-components/dist/components/arcgis-utility-network-trace');
 						break;
+					case 'arcgis-utility-network-validate-topology':
+						await import(
+							'@arcgis/map-components/dist/components/arcgis-utility-network-validate-topology'
+						);
+						break;
 					default:
 						break;
 				}
@@ -90,6 +95,13 @@
 						icon-start="trace"
 						label="Utility Network Trace">Utility Network Trace</calcite-dropdown-item
 					>
+					<calcite-dropdown-item
+						data-component="arcgis-utility-network-validate-topology"
+						data-testid="arcgis-utility-network-validate-topology-dropdown-item"
+						icon-start="validate-utility-network-topology"
+						label="Utility Network Validate Topology"
+						>Utility Network Validate Topology</calcite-dropdown-item
+					>
 				</calcite-dropdown-group>
 			</calcite-dropdown>
 		</calcite-navigation>
@@ -120,6 +132,11 @@
 							data-testid="arcgis-utility-network-trace-component"
 							reference-element="arcgis-map"
 						></arcgis-utility-network-trace>
+					{:else if selectedItem.dataset.component === 'arcgis-utility-network-validate-topology'}
+						<arcgis-utility-network-validate-topology
+							data-testid="arcgis-utility-network-validate-topology-component"
+							reference-element="arcgis-map"
+						></arcgis-utility-network-validate-topology>
 					{/if}
 				{/if}
 			</div>
