@@ -1,11 +1,12 @@
 <script lang="ts">
+	import map from '$lib/assets/map.png';
+	import scene from '$lib/assets/scene.png';
+	import utilityNetwork from '$lib/assets/utility-network.png';
 	import { onMount } from 'svelte';
 
 	let mounted = false;
 
 	onMount(async () => {
-		await import('@arcgis/map-components/dist/components/arcgis-map');
-		await import('@arcgis/map-components/dist/components/arcgis-scene');
 		await import('@esri/calcite-components/dist/components/calcite-card');
 		await import('@esri/calcite-components/dist/components/calcite-card-group');
 		await import('@esri/calcite-components/dist/components/calcite-chip');
@@ -31,24 +32,29 @@
 
 		<calcite-card-group label="Parking zones">
 			<calcite-card label="Map Components">
-				<arcgis-map item-id="d5dda743788a4b0688fe48f43ae7beb9" slot="thumbnail"></arcgis-map>
+				<img alt="A thumbnail of the map" class="thumbnail" src={map} slot="thumbnail" />
 				<span slot="heading">Map Components</span>
 				<calcite-link href="/map" slot="description">Add components to a map</calcite-link>
 			</calcite-card>
 
-			<calcite-card label="Utility Network Components">
-				<arcgis-map item-id="d5dda743788a4b0688fe48f43ae7beb9" slot="thumbnail"></arcgis-map>
-				<span slot="heading">Utility Network Components</span>
-				<calcite-link href="/utility-network" slot="description"
-					>Add Utility Network components to a map</calcite-link
-				>
-			</calcite-card>
-
 			<calcite-card label="Scene Components">
-				<arcgis-scene item-id="adfad6ee6c6043238ea64e121bb6429a" slot="thumbnail"></arcgis-scene>
+				<img alt="A thumbnail of the scene" class="thumbnail" src={scene} slot="thumbnail" />
 				<span slot="heading">Scene Components (Coming soon!)</span>
 				<calcite-link disabled href="/scene" slot="description"
 					>Add components to a scene</calcite-link
+				>
+			</calcite-card>
+
+			<calcite-card label="Utility Network Components">
+				<img
+					alt="A thumbnail of the utility network map"
+					class="thumbnail"
+					src={utilityNetwork}
+					slot="thumbnail"
+				/>
+				<span slot="heading">Utility Network Components</span>
+				<calcite-link href="/utility-network" slot="description"
+					>Add Utility Network components to a map</calcite-link
 				>
 			</calcite-card>
 		</calcite-card-group>
@@ -58,8 +64,7 @@
 {/if}
 
 <style>
-	arcgis-map,
-	arcgis-scene {
+	.thumbnail {
 		height: 24em;
 		width: 24em;
 	}
