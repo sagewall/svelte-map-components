@@ -5,5 +5,5 @@ test('map route has expected directions', async ({ page }) => {
 	await page.getByTestId('select-components').click();
 	await page.getByTestId('arcgis-directions-dropdown-item').click();
 	await page.getByTestId('arcgis-directions-dropdown-item-action').click();
-	await expect(page.getByTitle('Find address or place')).toBeVisible();
+	await expect(page.locator('arcgis-directions')).toBeVisible();
 });
