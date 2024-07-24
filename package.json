@@ -12,6 +12,7 @@
 		"lint": "prettier --check . && eslint .",
 		"format": "prettier --write .",
 		"test:integration": "playwright test",
+		"test:integration:update-snapshots": "playwright test --update-snapshots",
 		"test:unit": "vitest"
 	},
 	"devDependencies": {
@@ -36,6 +37,6 @@
 	},
 	"type": "module",
 	"dependencies": {
-		"@arcgis/map-components": "^4.31.0-next.31"
+		"@arcgis/map-components": "^4.31.0-next.32"
 	}
 }
