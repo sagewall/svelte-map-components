@@ -22,7 +22,6 @@
 		await import('@esri/calcite-components/dist/components/calcite-navigation');
 		await import('@esri/calcite-components/dist/components/calcite-navigation-logo');
 		await import('@esri/calcite-components/dist/components/calcite-shell');
-		await import('@esri/calcite-components/dist/components/calcite-shell-center-row');
 		await import('@esri/calcite-components/dist/components/calcite-shell-panel');
 
 		mounted = true;
@@ -162,11 +161,11 @@
 		>
 		</arcgis-map>
 		{#if center}
-			<shell-center-row>
+			<calcite-shell-panel slot="panel-bottom">
 				<div>
 					Map Center: {longitude}° longitude {latitude}° latitude
 				</div>
-			</shell-center-row>
+			</calcite-shell-panel>
 		{/if}
 	</calcite-shell>
 {:else}
