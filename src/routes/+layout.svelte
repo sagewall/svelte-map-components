@@ -5,7 +5,7 @@
 
 	onMount(async () => {
 		const { setAssetPath } = await import('@esri/calcite-components/dist/components');
-		setAssetPath('https://js.arcgis.com/calcite-components/2.10.1/assets');
+		setAssetPath('https://js.arcgis.com/calcite-components/2.13.1/assets');
 	});
 </script>
 
