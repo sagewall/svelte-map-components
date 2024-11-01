@@ -1,15 +1,15 @@
 <script lang="ts">
-	import type Point from '@arcgis/core/geometry/Point';
+	import Point from '@arcgis/core/geometry/Point';
 	import { onMount } from 'svelte';
 
-	let arcgisMapComponent: HTMLArcgisMapElement | null = null;
-	let center: Point;
-	let mounted = false;
-	let selectedItem: HTMLCalciteDropdownItemElement | null = null;
-	let selectedItems: HTMLCalciteDropdownItemElement[] = [];
+	let arcgisMapComponent: HTMLArcgisMapElement | null = $state(null);
+	let center: Point = $state(new Point());
+	let mounted = $state(false);
+	let selectedItem: HTMLCalciteDropdownItemElement | null = $state(null);
+	let selectedItems: HTMLCalciteDropdownItemElement[] = $state([]);
 
-	$: latitude = center?.latitude.toFixed(2);
-	$: longitude = center?.longitude.toFixed(2);
+	const latitude = $derived(center?.latitude.toFixed(2));
+	const longitude = $derived(center?.longitude.toFixed(2));
 
 	onMount(async () => {
 		await import('@arcgis/map-components/dist/components/arcgis-map');
@@ -78,7 +78,7 @@
 			></calcite-navigation-logo>
 			<calcite-dropdown
 				close-on-select-disabled
-				on:calciteDropdownSelect={handleOnCalciteDropdownSelect}
+				oncalciteDropdownSelect={handleOnCalciteDropdownSelect}
 				slot="content-end"
 			>
 				<calcite-button data-testid="select-components" slot="trigger"
@@ -118,14 +118,14 @@
 				{#each selectedItems as item, index}
 					<calcite-action
 						data-testid={`${item.dataset.testid}-action`}
-						on:click={() => (selectedItem = selectedItems[index])}
-						on:keypress={() => (selectedItem = selectedItems[index])}
+						onclick={() => (selectedItem = selectedItems[index])}
+						onkeypress={() => (selectedItem = selectedItems[index])}
 						tabindex="0"
 						role="button"
 						active={item.dataset.component === selectedItem?.dataset.component ? true : undefined}
 						icon={item.iconStart}
 						text={item.label}
-					/>
+					></calcite-action>
 				{/each}
 			</calcite-action-bar>
 			<div>
@@ -156,8 +156,8 @@
 		</calcite-shell-panel>
 		<arcgis-map
 			item-id="471eb0bf37074b1fbb972b1da70fb310"
-			on:arcgisViewChange={handleArcgisViewChange}
-			on:arcgisViewReadyChange={handleArcgisViewReadyChange}
+			onarcgisViewChange={handleArcgisViewChange}
+			onarcgisViewReadyChange={handleArcgisViewReadyChange}
 		>
 		</arcgis-map>
 		{#if center}

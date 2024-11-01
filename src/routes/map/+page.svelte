@@ -1,19 +1,19 @@
 <script lang="ts">
-	import type Point from '@arcgis/core/geometry/Point';
+	import Point from '@arcgis/core/geometry/Point';
 	import FeatureLayer from '@arcgis/core/layers/FeatureLayer';
 	import type Layer from '@arcgis/core/layers/Layer';
 	import type LayerView from '@arcgis/core/views/layers/LayerView';
 	import { onMount } from 'svelte';
 
-	let arcgisMapComponent: HTMLArcgisMapElement | null = null;
-	let center: Point;
-	let censusTrackLayer: FeatureLayer;
-	let mounted = false;
-	let selectedItem: HTMLCalciteDropdownItemElement | null = null;
-	let selectedItems: HTMLCalciteDropdownItemElement[] = [];
+	let arcgisMapComponent: HTMLArcgisMapElement | null = $state(null);
+	let center: Point = $state(new Point());
+	let censusTrackLayer: FeatureLayer = $state(new FeatureLayer());
+	let mounted = $state(false);
+	let selectedItem: HTMLCalciteDropdownItemElement | null = $state(null);
+	let selectedItems: HTMLCalciteDropdownItemElement[] = $state([]);
 
-	$: latitude = center?.latitude.toFixed(2);
-	$: longitude = center?.longitude.toFixed(2);
+	const latitude = $derived(center.latitude.toFixed(2));
+	const longitude = $derived(center.longitude.toFixed(2));
 
 	onMount(async () => {
 		await import('@arcgis/map-components/dist/components/arcgis-map');
@@ -208,7 +208,7 @@
 			></calcite-navigation-logo>
 			<calcite-dropdown
 				close-on-select-disabled
-				on:calciteDropdownSelect={handleOnCalciteDropdownSelect}
+				oncalciteDropdownSelect={handleOnCalciteDropdownSelect}
 				slot="content-end"
 			>
 				<calcite-button data-testid="select-components" slot="trigger"
@@ -367,14 +367,14 @@
 				{#each selectedItems as item, index}
 					<calcite-action
 						data-testid={`${item.dataset.testid}-action`}
-						on:click={() => (selectedItem = selectedItems[index])}
-						on:keypress={() => (selectedItem = selectedItems[index])}
+						onclick={() => (selectedItem = selectedItems[index])}
+						onkeypress={() => (selectedItem = selectedItems[index])}
 						tabindex="0"
 						role="button"
 						active={item.dataset.component === selectedItem?.dataset.component ? true : undefined}
 						icon={item.iconStart}
 						text={item.label}
-					/>
+					></calcite-action>
 				{/each}
 			</calcite-action-bar>
 			<div>
@@ -431,7 +431,7 @@
 					{:else if selectedItem.dataset.component === 'arcgis-editor'}
 						<arcgis-editor
 							data-testid="arcgis-editor-component"
-							on:arcgisReady={handleArcgisReadyEditor}
+							onarcgisReady={handleArcgisReadyEditor}
 							reference-element="arcgis-map"
 						></arcgis-editor>
 					{:else if selectedItem.dataset.component === 'arcgis-home'}
@@ -459,7 +459,7 @@
 					{:else if selectedItem.dataset.component === 'arcgis-scale-range-slider'}
 						<arcgis-scale-range-slider
 							data-testid="arcgis-scale-range-slider-component"
-							on:arcgisReady={handleArcgisReadyScaleRangeSlider}
+							onarcgisReady={handleArcgisReadyScaleRangeSlider}
 							reference-element="arcgis-map"
 						></arcgis-scale-range-slider>
 					{:else if selectedItem.dataset.component === 'arcgis-search'}
@@ -471,14 +471,14 @@
 					{:else if selectedItem.dataset.component === 'arcgis-table-list'}
 						<arcgis-table-list
 							data-testid="arcgis-table-list-component"
-							on:arcgisReady={handleArcgisReadyTableList}
+							onarcgisReady={handleArcgisReadyTableList}
 							reference-element="arcgis-map"
 						></arcgis-table-list>
 					{:else if selectedItem.dataset.component === 'arcgis-time-slider'}
 						<arcgis-time-slider
 							data-testid="arcgis-time-slider-component"
 							loop
-							on:arcgisReady={handleArcgisReadyTimeSlider}
+							onarcgisReady={handleArcgisReadyTimeSlider}
 							reference-element="arcgis-map"
 						></arcgis-time-slider>
 					{:else if selectedItem.dataset.component === 'arcgis-track'}
@@ -493,8 +493,8 @@
 		</calcite-shell-panel>
 		<arcgis-map
 			item-id="d5dda743788a4b0688fe48f43ae7beb9"
-			on:arcgisViewChange={handleArcgisViewChange}
-			on:arcgisViewReadyChange={handleArcgisViewReadyChange}
+			onarcgisViewChange={handleArcgisViewChange}
+			onarcgisViewReadyChange={handleArcgisViewReadyChange}
 		></arcgis-map>
 		{#if center}
 			<calcite-shell-panel slot="panel-bottom">

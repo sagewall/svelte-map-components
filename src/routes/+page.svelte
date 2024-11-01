@@ -4,7 +4,7 @@
 	import utilityNetwork from '$lib/assets/utility-network.png';
 	import { onMount } from 'svelte';
 
-	let mounted = false;
+	let mounted = $state(false);
 
 	onMount(async () => {
 		await import('@esri/calcite-components/dist/components/calcite-card');
