@@ -31,6 +31,17 @@
 		mounted = true;
 	});
 
+	function handleArcgisPropertyChangeScaleRangeSlider(event: CustomEvent) {
+		const scaleRangeSlider = event.target as HTMLArcgisScaleRangeSliderElement;
+		if (event.detail.name === 'maxScale') {
+			censusTrackLayer.maxScale = scaleRangeSlider.maxScale;
+		}
+
+		if (event.detail.name === 'minScale') {
+			censusTrackLayer.minScale = scaleRangeSlider.minScale;
+		}
+	}
+
 	function handleArcgisReadyEditor() {
 		const featureLayerIds = arcgisMapComponent?.layerViews.map((layerView: LayerView) => {
 			if (layerView.layer.type === 'feature') {
@@ -459,6 +470,7 @@
 					{:else if selectedItem.dataset.component === 'arcgis-scale-range-slider'}
 						<arcgis-scale-range-slider
 							data-testid="arcgis-scale-range-slider-component"
+							onarcgisPropertyChange={handleArcgisPropertyChangeScaleRangeSlider}
 							onarcgisReady={handleArcgisReadyScaleRangeSlider}
 							reference-element="arcgis-map"
 						></arcgis-scale-range-slider>
