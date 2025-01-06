@@ -1,13 +1,14 @@
 <script lang="ts">
 	import Point from '@arcgis/core/geometry/Point';
 	import FeatureLayer from '@arcgis/core/layers/FeatureLayer';
+	import OrientedImageryLayer from '@arcgis/core/layers/OrientedImageryLayer';
 	import type Layer from '@arcgis/core/layers/Layer';
 	import type LayerView from '@arcgis/core/views/layers/LayerView';
 	import { onMount } from 'svelte';
 
 	let arcgisMapComponent: HTMLArcgisMapElement | null = $state(null);
 	let center: Point = $state(new Point());
-	let censusTrackLayer: FeatureLayer = $state(new FeatureLayer());
+	let bigfootSightingLayer: FeatureLayer = $state(new FeatureLayer());
 	let mounted = $state(false);
 	let selectedItem: HTMLCalciteDropdownItemElement | null = $state(null);
 	let selectedItems: HTMLCalciteDropdownItemElement[] = $state([]);
@@ -34,11 +35,11 @@
 	function handleArcgisPropertyChangeScaleRangeSlider(event: CustomEvent) {
 		const scaleRangeSlider = event.target as HTMLArcgisScaleRangeSliderElement;
 		if (event.detail.name === 'maxScale') {
-			censusTrackLayer.maxScale = scaleRangeSlider.maxScale;
+			bigfootSightingLayer.maxScale = scaleRangeSlider.maxScale;
 		}
 
 		if (event.detail.name === 'minScale') {
-			censusTrackLayer.minScale = scaleRangeSlider.minScale;
+			bigfootSightingLayer.minScale = scaleRangeSlider.minScale;
 		}
 	}
 
@@ -62,10 +63,24 @@
 		});
 	}
 
+	async function handleArcgisReadyOrientedImageryViewer(event: {
+		target: HTMLArcgisOrientedImageryViewerElement;
+	}) {
+		const orientedImageryLayer = new OrientedImageryLayer({
+			portalItem: {
+				id: 'e8df83c23c8e47598b49e15ae7e5816b'
+			}
+		});
+		arcgisMapComponent?.addLayer(orientedImageryLayer);
+		await orientedImageryLayer.load();
+		event.target.layer = orientedImageryLayer;
+		arcgisMapComponent?.goTo(orientedImageryLayer.fullExtent);
+	}
+
 	async function handleArcgisReadyScaleRangeSlider(event: {
 		target: HTMLArcgisScaleRangeSliderElement;
 	}) {
-		event.target.layer = censusTrackLayer;
+		event.target.layer = bigfootSightingLayer;
 	}
 
 	function handleArcgisReadyTableList() {
@@ -115,8 +130,8 @@
 	function handleArcgisViewReadyChange(event: CustomEvent) {
 		arcgisMapComponent = event.target as HTMLArcgisMapElement;
 
-		censusTrackLayer = arcgisMapComponent.map.layers.find(
-			(layer: Layer) => layer.title === 'Census Tracts'
+		bigfootSightingLayer = arcgisMapComponent.map.layers.find(
+			(layer: Layer) => layer.title === 'Bigfoot sighting'
 		) as FeatureLayer;
 	}
 
@@ -170,6 +185,9 @@
 						break;
 					case 'arcgis-locate':
 						await import('@arcgis/map-components/dist/components/arcgis-locate');
+						break;
+					case 'arcgis-oriented-imagery-viewer':
+						await import('@arcgis/map-components/dist/components/arcgis-oriented-imagery-viewer');
 						break;
 					case 'arcgis-print':
 						await import('@arcgis/map-components/dist/components/arcgis-print');
@@ -317,6 +335,12 @@
 						label="Locate">Locate</calcite-dropdown-item
 					>
 					<calcite-dropdown-item
+						data-component="arcgis-oriented-imagery-viewer"
+						data-testid="arcgis-oriented-imagery-viewer-dropdown-item"
+						icon-start="oriented-imagery-widget"
+						label="Oriented Imagery Viewer">Oriented Imagery Viewer</calcite-dropdown-item
+					>
+					<calcite-dropdown-item
 						data-component="arcgis-print"
 						data-testid="arcgis-print-dropdown-item"
 						icon-start="print"
@@ -459,6 +483,12 @@
 					{:else if selectedItem.dataset.component === 'arcgis-locate'}
 						<arcgis-locate data-testid="arcgis-locate-component" reference-element="arcgis-map"
 						></arcgis-locate>
+					{:else if selectedItem.dataset.component === 'arcgis-oriented-imagery-viewer'}
+						<arcgis-oriented-imagery-viewer
+							data-testid="arcgis-oriented-imagery-viewer"
+							onarcgisReady={handleArcgisReadyOrientedImageryViewer}
+							reference-element="arcgis-map"
+						></arcgis-oriented-imagery-viewer>
 					{:else if selectedItem.dataset.component === 'arcgis-print'}
 						<arcgis-print data-testid="arcgis-print-component" reference-element="arcgis-map"
 						></arcgis-print>
@@ -504,15 +534,15 @@
 			</div>
 		</calcite-shell-panel>
 		<arcgis-map
-			item-id="d5dda743788a4b0688fe48f43ae7beb9"
+			item-id="ef2644781da844648e8bb30ab52a02bc"
 			onarcgisViewChange={handleArcgisViewChange}
 			onarcgisViewReadyChange={handleArcgisViewReadyChange}
 		></arcgis-map>
 		{#if center}
 			<calcite-shell-panel slot="panel-bottom">
-				<div>
-					Map Center: {longitude}° longitude {latitude}° latitude
-				</div>
+				<span id="map-center">
+					{longitude}°, {latitude}°
+				</span>
 			</calcite-shell-panel>
 		{/if}
 	</calcite-shell>
@@ -528,5 +558,9 @@
 	}
 	arcgis-map {
 		flex: 1;
+	}
+
+	#map-center {
+		width: 100%;
 	}
 </style>
