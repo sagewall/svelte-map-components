@@ -1,5 +1,6 @@
 <script lang="ts">
 	import Point from '@arcgis/core/geometry/Point';
+	import type WebMap from '@arcgis/core/WebMap';
 	import { onMount } from 'svelte';
 
 	let arcgisMapComponent: HTMLArcgisMapElement | null = $state(null);
@@ -8,8 +9,8 @@
 	let selectedItem: HTMLCalciteDropdownItemElement | null = $state(null);
 	let selectedItems: HTMLCalciteDropdownItemElement[] = $state([]);
 
-	const latitude = $derived(center?.latitude.toFixed(2));
-	const longitude = $derived(center?.longitude.toFixed(2));
+	const latitude = $derived(center?.latitude?.toFixed(2));
+	const longitude = $derived(center?.longitude?.toFixed(2));
 
 	onMount(async () => {
 		await import('@arcgis/map-components/dist/components/arcgis-map');
@@ -69,12 +70,12 @@
 	<calcite-shell>
 		<calcite-navigation slot="header">
 			<calcite-navigation-logo
-				description={arcgisMapComponent?.map.portalItem.snippet.split('.')[0]}
-				heading={arcgisMapComponent?.map.portalItem.title}
-				href={arcgisMapComponent?.map.portalItem.itemPageUrl}
+				description={(arcgisMapComponent?.map as WebMap).portalItem?.snippet?.split('.')[0]}
+				heading={(arcgisMapComponent?.map as WebMap).portalItem?.title}
+				href={(arcgisMapComponent?.map as WebMap).portalItem?.itemPageUrl}
 				label="Thumbnail of map"
 				slot="logo"
-				thumbnail={arcgisMapComponent?.map.portalItem.thumbnailUrl}
+				thumbnail={(arcgisMapComponent?.map as WebMap).portalItem?.thumbnailUrl}
 			></calcite-navigation-logo>
 			<calcite-dropdown
 				close-on-select-disabled

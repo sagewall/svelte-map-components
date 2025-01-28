@@ -1,9 +1,11 @@
 <script lang="ts">
 	import Point from '@arcgis/core/geometry/Point';
 	import FeatureLayer from '@arcgis/core/layers/FeatureLayer';
-	import OrientedImageryLayer from '@arcgis/core/layers/OrientedImageryLayer';
 	import type Layer from '@arcgis/core/layers/Layer';
+	import OrientedImageryLayer from '@arcgis/core/layers/OrientedImageryLayer';
+	import type TimeInterval from '@arcgis/core/time/TimeInterval';
 	import type LayerView from '@arcgis/core/views/layers/LayerView';
+	import type WebMap from '@arcgis/core/WebMap';
 	import { onMount } from 'svelte';
 
 	let arcgisMapComponent: HTMLArcgisMapElement | null = $state(null);
@@ -13,8 +15,8 @@
 	let selectedItem: HTMLCalciteDropdownItemElement | null = $state(null);
 	let selectedItems: HTMLCalciteDropdownItemElement[] = $state([]);
 
-	const latitude = $derived(center.latitude.toFixed(2));
-	const longitude = $derived(center.longitude.toFixed(2));
+	const latitude = $derived(center.latitude?.toFixed(2));
+	const longitude = $derived(center.longitude?.toFixed(2));
 
 	onMount(async () => {
 		await import('@arcgis/map-components/dist/components/arcgis-map');
@@ -46,7 +48,7 @@
 	function handleArcgisReadyEditor() {
 		const featureLayerIds = arcgisMapComponent?.layerViews.map((layerView: LayerView) => {
 			if (layerView.layer.type === 'feature') {
-				return (layerView.layer as FeatureLayer).portalItem.id;
+				return (layerView.layer as FeatureLayer).portalItem?.id;
 			}
 		});
 
@@ -57,7 +59,7 @@
 		];
 
 		editableLayerIds.forEach((id) => {
-			if (!featureLayerIds.includes(id)) {
+			if (!featureLayerIds?.includes(id)) {
 				arcgisMapComponent?.addLayer(new FeatureLayer({ portalItem: { id } }));
 			}
 		});
@@ -86,7 +88,7 @@
 	function handleArcgisReadyTableList() {
 		const featureLayerIds = arcgisMapComponent?.map.layers.map((layer: Layer) => {
 			if (layer.type === 'feature') {
-				return (layer as FeatureLayer).portalItem.id;
+				return (layer as FeatureLayer).portalItem?.id;
 			}
 		});
 
@@ -116,9 +118,9 @@
 			arcgisMapComponent?.addLayer(featureLayer);
 
 			await featureLayer.load();
-			event.target.fullTimeExtent = featureLayer.timeInfo.fullTimeExtent;
+			event.target.fullTimeExtent = featureLayer.timeInfo?.fullTimeExtent;
 			event.target.stops = {
-				interval: featureLayer.timeInfo.interval
+				interval: featureLayer.timeInfo?.interval as TimeInterval
 			};
 		}
 	}
@@ -228,11 +230,11 @@
 	<calcite-shell>
 		<calcite-navigation slot="header">
 			<calcite-navigation-logo
-				description={arcgisMapComponent?.map.portalItem.snippet}
-				heading={arcgisMapComponent?.map.portalItem.title}
+				description={(arcgisMapComponent?.map as WebMap).portalItem?.snippet}
+				heading={(arcgisMapComponent?.map as WebMap).portalItem?.title}
 				slot="logo"
-				thumbnail={arcgisMapComponent?.map.portalItem.thumbnailUrl}
-				href={arcgisMapComponent?.map.portalItem.itemPageUrl}
+				thumbnail={(arcgisMapComponent?.map as WebMap).portalItem?.thumbnailUrl}
+				href={(arcgisMapComponent?.map as WebMap).portalItem?.itemPageUrl}
 				label="Thumbnail of map"
 			></calcite-navigation-logo>
 			<calcite-dropdown
