@@ -3,7 +3,7 @@ import { defineConfig } from 'vitest/config';
 
 export default defineConfig({
 	build: {
-		chunkSizeWarningLimit: 1024
+		chunkSizeWarningLimit: 1536
 	},
 	plugins: [sveltekit()],
 	test: {
