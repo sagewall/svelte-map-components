@@ -28,17 +28,18 @@
 		mounted = true;
 	});
 
-	function handleArcgisViewChange(event: CustomEvent) {
-		center = (event.target as HTMLArcgisMapElement).center;
+	function handleArcgisViewChange() {
+		center = arcgisMapComponent?.center as Point;
 	}
 
 	function handleArcgisViewReadyChange(event: CustomEvent) {
 		arcgisMapComponent = event.target as HTMLArcgisMapElement;
 	}
 
-	function handleOnCalciteDropdownSelect(event: { target: HTMLCalciteDropdownElement }) {
-		if (event.target) {
-			selectedItems = event.target.selectedItems;
+	function handleOnCalciteDropdownSelect(event: CustomEvent) {
+		const calciteDropdown = event.target as HTMLCalciteDropdownElement;
+		if (calciteDropdown) {
+			selectedItems = calciteDropdown.selectedItems;
 
 			selectedItems.forEach(async (item) => {
 				switch (item.dataset.component) {

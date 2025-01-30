@@ -65,9 +65,8 @@
 		});
 	}
 
-	async function handleArcgisReadyOrientedImageryViewer(event: {
-		target: HTMLArcgisOrientedImageryViewerElement;
-	}) {
+	async function handleArcgisReadyOrientedImageryViewer(event: CustomEvent) {
+		const orientedImageryViewer = event.target as HTMLArcgisOrientedImageryViewerElement;
 		const orientedImageryLayer = new OrientedImageryLayer({
 			portalItem: {
 				id: 'e8df83c23c8e47598b49e15ae7e5816b'
@@ -75,14 +74,13 @@
 		});
 		arcgisMapComponent?.addLayer(orientedImageryLayer);
 		await orientedImageryLayer.load();
-		event.target.layer = orientedImageryLayer;
+		orientedImageryViewer.layer = orientedImageryLayer;
 		arcgisMapComponent?.goTo(orientedImageryLayer.fullExtent);
 	}
 
-	async function handleArcgisReadyScaleRangeSlider(event: {
-		target: HTMLArcgisScaleRangeSliderElement;
-	}) {
-		event.target.layer = bigfootSightingLayer;
+	async function handleArcgisReadyScaleRangeSlider(event: CustomEvent) {
+		const arcgisScaleRangeSlider = event.target as HTMLArcgisScaleRangeSliderElement;
+		arcgisScaleRangeSlider.layer = bigfootSightingLayer;
 	}
 
 	function handleArcgisReadyTableList() {
@@ -103,7 +101,8 @@
 		});
 	}
 
-	async function handleArcgisReadyTimeSlider(event: { target: HTMLArcgisTimeSliderElement }) {
+	async function handleArcgisReadyTimeSlider(event: CustomEvent) {
+		const arcgisTimeSlider = event.target as HTMLArcgisTimeSliderElement;
 		const featureLayerUrls = arcgisMapComponent?.map.layers.map((layer: Layer) => {
 			if (layer.type === 'feature') {
 				return (layer as FeatureLayer).url;
@@ -118,15 +117,15 @@
 			arcgisMapComponent?.addLayer(featureLayer);
 
 			await featureLayer.load();
-			event.target.fullTimeExtent = featureLayer.timeInfo?.fullTimeExtent;
-			event.target.stops = {
+			arcgisTimeSlider.fullTimeExtent = featureLayer.timeInfo?.fullTimeExtent;
+			arcgisTimeSlider.stops = {
 				interval: featureLayer.timeInfo?.interval as TimeInterval
 			};
 		}
 	}
 
-	function handleArcgisViewChange(event: CustomEvent) {
-		center = (event.target as HTMLArcgisMapElement).center;
+	function handleArcgisViewChange() {
+		center = arcgisMapComponent?.center as Point;
 	}
 
 	function handleArcgisViewReadyChange(event: CustomEvent) {
@@ -137,9 +136,10 @@
 		) as FeatureLayer;
 	}
 
-	function handleOnCalciteDropdownSelect(event: { target: HTMLCalciteDropdownElement }) {
-		if (event.target) {
-			selectedItems = event.target.selectedItems;
+	function handleOnCalciteDropdownSelect(event: CustomEvent) {
+		const calciteDropdown = event.target as HTMLCalciteDropdownElement;
+		if (calciteDropdown) {
+			selectedItems = calciteDropdown.selectedItems;
 
 			selectedItems.forEach(async (item) => {
 				switch (item.dataset.component) {
