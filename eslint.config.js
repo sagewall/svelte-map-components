@@ -16,10 +16,11 @@ export default ts.config(
 				...globals.browser,
 				...globals.node,
 				HTMLArcgisMapElement: 'readonly',
-				HTMLCalciteDropdownElement: 'readonly',
-				HTMLCalciteDropdownItemElement: 'readonly',
+				HTMLArcgisOrientedImageryViewerElement: 'readonly',
 				HTMLArcgisScaleRangeSliderElement: 'readonly',
-				HTMLArcgisTimeSliderElement: 'readonly'
+				HTMLArcgisTimeSliderElement: 'readonly',
+				HTMLCalciteDropdownElement: 'readonly',
+				HTMLCalciteDropdownItemElement: 'readonly'
 			}
 		}
 	},

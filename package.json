@@ -26,7 +26,7 @@
 		"globals": "^15.14.0",
 		"prettier": "^3.4.2",
 		"prettier-plugin-svelte": "^3.3.3",
-		"svelte": "^5.19.4",
+		"svelte": "^5.19.6",
 		"svelte-check": "^4.1.4",
 		"typescript": "^5.7.3",
 		"typescript-eslint": "^8.22.0",
@@ -34,6 +34,6 @@
 		"vitest": "^3.0.4"
 	},
 	"dependencies": {
-		"@arcgis/map-components": "^4.32.0-next.115"
+		"@arcgis/map-components": "^4.32.0-next.118"
 	}
 }
