@@ -34,6 +34,6 @@
 		"vitest": "^3.0.4"
 	},
 	"dependencies": {
-		"@arcgis/map-components": "^4.32.0-next.118"
+		"@arcgis/map-components": "^4.32.0-next.120"
 	}
 }
