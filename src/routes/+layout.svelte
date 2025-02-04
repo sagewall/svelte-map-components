@@ -1,6 +1,7 @@
 <script lang="ts">
-	import '@arcgis/core/assets/esri/themes/light/main.css';
 	import '@esri/calcite-components/dist/calcite/calcite.css';
+	import '@arcgis/core/assets/esri/themes/light/main.css';
+	import '@arcgis/map-components/arcgis-map-components/arcgis-map-components.css';
 	import { onMount } from 'svelte';
 
 	let { children } = $props();
