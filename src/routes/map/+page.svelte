@@ -1,20 +1,61 @@
 <script lang="ts">
+	import type Collection from '@arcgis/core/core/Collection';
+	import type Handles from '@arcgis/core/core/Handles';
+	import * as reactiveUtils from '@arcgis/core/core/reactiveUtils';
 	import Point from '@arcgis/core/geometry/Point';
+	import {
+		getCatalogLayerForLayer,
+		isLayerFromCatalog
+	} from '@arcgis/core/layers/catalog/catalogUtils';
+	import CatalogLayer from '@arcgis/core/layers/CatalogLayer';
 	import FeatureLayer from '@arcgis/core/layers/FeatureLayer';
+	import GroupLayer from '@arcgis/core/layers/GroupLayer';
+	import KnowledgeGraphLayer from '@arcgis/core/layers/KnowledgeGraphLayer';
 	import type Layer from '@arcgis/core/layers/Layer';
 	import OrientedImageryLayer from '@arcgis/core/layers/OrientedImageryLayer';
+	import Map from '@arcgis/core/Map';
 	import type TimeInterval from '@arcgis/core/time/TimeInterval';
+	import CatalogLayerView from '@arcgis/core/views/layers/CatalogLayerView';
 	import type LayerView from '@arcgis/core/views/layers/LayerView';
 	import type WebMap from '@arcgis/core/WebMap';
+	import type ListItem from '@arcgis/core/widgets/LayerList/ListItem';
 	import { onMount } from 'svelte';
 
 	let arcgisMapComponent: HTMLArcgisMapElement | null = $state(null);
-	let center: Point = $state(new Point());
 	let bigfootSightingLayer: FeatureLayer = $state(new FeatureLayer());
+	let center: Point = $state(new Point());
+	let highlightHandle: Handles;
 	let mounted = $state(false);
 	let selectedItem: HTMLCalciteDropdownItemElement | null = $state(null);
 	let selectedItems: HTMLCalciteDropdownItemElement[] = $state([]);
 
+	const knowledgeGraphOptions = {
+		filterPlaceholder: 'Filter tables',
+
+		listItemCreatedFunction: (event: { item: ListItem }) => {
+			const { item } = event;
+			item.actionsSections = [
+				[
+					{
+						icon: 'table',
+						id: 'open-table',
+						title: 'Show table'
+					},
+					{
+						icon: 'information',
+						id: 'information',
+						title: 'Show information'
+					}
+				]
+			];
+		},
+		minFilterItems: 1,
+		visibleElements: {
+			errors: true,
+			filter: true,
+			statusIndicators: true
+		}
+	};
 	const latitude = $derived(center.latitude?.toFixed(2));
 	const longitude = $derived(center.longitude?.toFixed(2));
 
@@ -33,6 +74,19 @@
 
 		mounted = true;
 	});
+
+	async function addLayerFromDynamicGroup(layer: FeatureLayer) {
+		const parentCatalogLayer = getCatalogLayerForLayer(layer);
+		if (!parentCatalogLayer) {
+			return;
+		}
+		const footprint = parentCatalogLayer.createFootprintFromLayer(layer);
+		if (!footprint) {
+			return;
+		}
+		const layerFromFootprint = await parentCatalogLayer.createLayerFromFootprint(footprint);
+		arcgisMapComponent?.map.layers.add(layerFromFootprint);
+	}
 
 	function handleArcgisPropertyChangeScaleRangeSlider(event: CustomEvent) {
 		const scaleRangeSlider = event.target as HTMLArcgisScaleRangeSliderElement;
@@ -60,9 +114,73 @@
 
 		editableLayerIds.forEach((id) => {
 			if (!featureLayerIds?.includes(id)) {
-				arcgisMapComponent?.addLayer(new FeatureLayer({ portalItem: { id } }));
+				arcgisMapComponent?.map.layers.add(new FeatureLayer({ portalItem: { id } }));
 			}
 		});
+	}
+
+	function handleArcgisReadyLayerList(event: { target: HTMLArcgisLayerListElement }) {
+		const catalogLayer = new CatalogLayer({
+			url: 'https://services.arcgis.com/V6ZHFr6zdgNZuVG0/arcgis/rest/services/Sanborn_maps_catalog/FeatureServer'
+		});
+		catalogLayer.dynamicGroupLayer.maximumVisibleSublayers = 20;
+
+		const knowledgeGraphLayer = new KnowledgeGraphLayer({
+			title: 'Phone calls',
+			url: `https://sampleserver7.arcgisonline.com/server/rest/services/Hosted/PhoneCalls/KnowledgeGraphServer`
+		});
+
+		arcgisMapComponent?.map.layers.addMany([catalogLayer, knowledgeGraphLayer]);
+
+		event.target?.selectedItems.on(
+			'change',
+			(event: { removed: Collection<ListItem>; added: Collection<ListItem> }) => {
+				const { removed, added } = event;
+				removed.forEach((item: ListItem) => {
+					const { layer } = item;
+					if (layer instanceof FeatureLayer) {
+						layer.effect = 'none';
+					}
+				});
+				added.forEach((item: ListItem) => {
+					const { layer } = item;
+					if (layer instanceof FeatureLayer) {
+						layer.effect = 'drop-shadow(2px, 2px, 3px) saturate(250%)';
+					}
+				});
+			}
+		);
+
+		reactiveUtils.on(
+			() => event.target?.catalogLayerList,
+			'trigger-action',
+			(event: any) => {
+				if (event.action.id === 'add-layer') {
+					event.target?.openedLayers.pop();
+					addLayerFromDynamicGroup(event.item.layer);
+					alert(`Added ${event.item.layer.title} to the map`);
+				}
+			}
+		);
+
+		reactiveUtils.watch(
+			() => event.target?.catalogLayerList,
+			() => {
+				highlightHandle && highlightHandle.remove();
+			}
+		);
+
+		reactiveUtils.watch(
+			() => event.target?.selectedItems.at(0)?.layer as Layer,
+			(layer: Layer) => layer && handleLayerSelection(layer)
+		);
+
+		reactiveUtils.watch(
+			() => event.target?.catalogLayerList?.selectedItems.at(0)?.layer as Layer,
+			(layer: Layer) => {
+				layer && handleLayerSelection(layer);
+			}
+		);
 	}
 
 	async function handleArcgisReadyOrientedImageryViewer(event: CustomEvent) {
@@ -72,7 +190,7 @@
 				id: 'e8df83c23c8e47598b49e15ae7e5816b'
 			}
 		});
-		arcgisMapComponent?.addLayer(orientedImageryLayer);
+		arcgisMapComponent?.map.layers.add(orientedImageryLayer);
 		await orientedImageryLayer.load();
 		orientedImageryViewer.layer = orientedImageryLayer;
 		arcgisMapComponent?.goTo(orientedImageryLayer.fullExtent);
@@ -114,13 +232,39 @@
 
 		if (!featureLayerUrls?.includes(url)) {
 			const featureLayer = new FeatureLayer({ url });
-			arcgisMapComponent?.addLayer(featureLayer);
+			arcgisMapComponent?.map.layers.add(featureLayer);
 
 			await featureLayer.load();
 			arcgisTimeSlider.fullTimeExtent = featureLayer.timeInfo?.fullTimeExtent;
 			arcgisTimeSlider.stops = {
 				interval: featureLayer.timeInfo?.interval as TimeInterval
 			};
+		}
+	}
+
+	function handleArcgisTriggerActionLayerList(event: CustomEvent) {
+		const { id } = event.detail.action;
+		const { layer } = event.detail.item;
+
+		const addGroupLayer = (parent: Map | GroupLayer, layers: Collection<Layer>) => {
+			const groupLayer = new GroupLayer({
+				title: 'New group layer'
+			});
+			const layerIndex = layers.findIndex((mapLayer) => layer === mapLayer);
+			parent.add(groupLayer, layerIndex + 1);
+			groupLayer.add(layer as Layer);
+		};
+
+		if (id === 'add-group-layer' && layer) {
+			if (layer.parent instanceof GroupLayer) {
+				addGroupLayer(layer.parent, layer.parent.layers);
+			} else if (layer.parent instanceof Map) {
+				addGroupLayer(layer.parent, arcgisMapComponent?.map.layers as Collection<Layer>);
+			}
+		}
+
+		if (id === 'zoom-to') {
+			arcgisMapComponent?.goTo((layer as Layer).fullExtent);
 		}
 	}
 
@@ -222,6 +366,95 @@
 						break;
 				}
 			});
+		}
+	}
+
+	async function handleLayerSelection(layer: Layer) {
+		console.log(layer.title, layer.type, layer.persistenceEnabled);
+
+		if (layer instanceof FeatureLayer) {
+			console.log('publishingInfo.status', layer.publishingInfo?.status);
+		}
+
+		if (isLayerFromCatalog(layer)) {
+			const parentCatalogLayer = getCatalogLayerForLayer(layer);
+			if (!parentCatalogLayer) {
+				return;
+			}
+			const footprint = parentCatalogLayer.createFootprintFromLayer(layer);
+
+			const layerView = (await arcgisMapComponent?.view.whenLayerView(
+				parentCatalogLayer
+			)) as CatalogLayerView;
+			await reactiveUtils.whenOnce(() => !layerView.updating);
+
+			highlightHandle?.remove();
+			if (!footprint || !layerView.footprintLayerView) {
+				return;
+			}
+			highlightHandle = layerView.footprintLayerView.highlight(footprint) as Handles;
+		}
+	}
+
+	async function listItemCreatedFunction(event: { item: ListItem }) {
+		const { item } = event;
+		const { layer } = item;
+
+		try {
+			layer && (await layer.load());
+		} catch {
+			console.log(`load failed for ${layer?.title}`);
+		}
+
+		item.panel = {
+			content: 'legend'
+		};
+
+		if (layer?.type === 'knowledge-graph-sublayer' || layer?.type === 'knowledge-graph') {
+			item.actionsSections = [
+				[
+					{
+						title: 'Open attribute table',
+						icon: 'table',
+						id: 'attribute-table'
+					},
+					{
+						icon: 'information',
+						id: 'information',
+						title: 'Show information'
+					}
+				]
+			];
+		}
+
+		if (isLayerFromCatalog(layer as Layer)) {
+			item.actionsSections = [
+				[
+					{
+						title: 'Add layer to map',
+						icon: 'add-layer',
+						id: 'add-layer'
+					}
+				]
+			];
+		}
+		if (!isLayerFromCatalog(layer as Layer)) {
+			item.actionsSections = [
+				[
+					{
+						title: 'Zoom to',
+						icon: 'zoom-to-object',
+						id: 'zoom-to'
+					}
+				],
+				[
+					{
+						title: 'Create group layer',
+						icon: 'folder-new',
+						id: 'add-group-layer'
+					}
+				]
+			];
 		}
 	}
 </script>
@@ -477,7 +710,16 @@
 					{:else if selectedItem.dataset.component === 'arcgis-layer-list'}
 						<arcgis-layer-list
 							data-testid="arcgis-layer-list-component"
+							onarcgisTriggerAction={handleArcgisTriggerActionLayerList}
+							{knowledgeGraphOptions}
+							{listItemCreatedFunction}
+							onarcgisReady={handleArcgisReadyLayerList}
 							reference-element="arcgis-map"
+							selection-mode="single"
+							show-close-button
+							show-collapse-button
+							show-filter
+							show-heading
 						></arcgis-layer-list>
 					{:else if selectedItem.dataset.component === 'arcgis-legend'}
 						<arcgis-legend data-testid="arcgis-legend-component" reference-element="arcgis-map"
