@@ -1,4 +1,5 @@
 /// <reference types="@arcgis/map-components" />
+/// <reference types="@esri/calcite-components" />
 
 // See https://svelte.dev/docs/kit/types#app.d.ts
 // for information about these interfaces
