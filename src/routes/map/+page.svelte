@@ -401,7 +401,7 @@
 		</calcite-navigation>
 		<calcite-shell-panel slot="panel-start" position="start" resizable>
 			<calcite-action-bar slot="action-bar">
-				{#each selectedItems as item, index}
+				{#each selectedItems as item, index (item.dataset.testid)}
 					<calcite-action
 						data-testid={`${item.dataset.testid}-action`}
 						onclick={() => (selectedItem = selectedItems[index])}
