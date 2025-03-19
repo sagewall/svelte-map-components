@@ -1,6 +1,5 @@
 <script lang="ts">
 	import type Collection from '@arcgis/core/core/Collection';
-	import type Handles from '@arcgis/core/core/Handles';
 	import * as reactiveUtils from '@arcgis/core/core/reactiveUtils';
 	import {
 		getCatalogLayerForLayer,
@@ -220,7 +219,7 @@
 			if (!footprint || !layerView.footprintLayerView) {
 				return;
 			}
-			highlightHandle = layerView.footprintLayerView.highlight(footprint) as Handles;
+			highlightHandle = layerView.footprintLayerView.highlight(footprint) as IHandle;
 		}
 	}
 
