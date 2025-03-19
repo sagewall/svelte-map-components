@@ -219,7 +219,7 @@
 			if (!footprint || !layerView.footprintLayerView) {
 				return;
 			}
-			highlightHandle = layerView.footprintLayerView.highlight(footprint) as IHandle;
+			highlightHandle = layerView.footprintLayerView.highlight(footprint);
 		}
 	}
 
