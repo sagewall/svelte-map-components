@@ -1,103 +1,39 @@
 <script lang="ts">
-	import type Collection from '@arcgis/core/core/Collection';
-	import type Handles from '@arcgis/core/core/Handles';
-	import * as reactiveUtils from '@arcgis/core/core/reactiveUtils';
+	import LayerList from '$lib/LayerList.svelte';
 	import Point from '@arcgis/core/geometry/Point';
-	import {
-		getCatalogLayerForLayer,
-		isLayerFromCatalog
-	} from '@arcgis/core/layers/catalog/catalogUtils';
-	import CatalogLayer from '@arcgis/core/layers/CatalogLayer';
 	import FeatureLayer from '@arcgis/core/layers/FeatureLayer';
-	import GroupLayer from '@arcgis/core/layers/GroupLayer';
-	import KnowledgeGraphLayer from '@arcgis/core/layers/KnowledgeGraphLayer';
 	import type Layer from '@arcgis/core/layers/Layer';
 	import OrientedImageryLayer from '@arcgis/core/layers/OrientedImageryLayer';
-	import Map from '@arcgis/core/Map';
 	import type TimeInterval from '@arcgis/core/time/TimeInterval';
-	import CatalogLayerView from '@arcgis/core/views/layers/CatalogLayerView';
 	import type LayerView from '@arcgis/core/views/layers/LayerView';
 	import type WebMap from '@arcgis/core/WebMap';
-	import type ListItem from '@arcgis/core/widgets/LayerList/ListItem';
 	import { onMount } from 'svelte';
 
 	let arcgisMapComponent: HTMLArcgisMapElement | null = $state(null);
 	let bigfootSightingLayer: FeatureLayer = $state(new FeatureLayer());
 	let center: Point = $state(new Point());
-	let highlightHandle: Handles;
 	let mounted = $state(false);
 	let selectedItem: HTMLCalciteDropdownItemElement | null = $state(null);
 	let selectedItems: HTMLCalciteDropdownItemElement[] = $state([]);
 
-	const knowledgeGraphOptions = {
-		filterPlaceholder: 'Filter tables',
-
-		listItemCreatedFunction: (event: { item: ListItem }) => {
-			const { item } = event;
-			item.actionsSections = [
-				[
-					{
-						icon: 'table',
-						id: 'open-table',
-						title: 'Show table'
-					},
-					{
-						icon: 'information',
-						id: 'information',
-						title: 'Show information'
-					}
-				]
-			];
-		},
-		minFilterItems: 1,
-		visibleElements: {
-			errors: true,
-			filter: true,
-			statusIndicators: true
-		}
-	};
 	const latitude = $derived(center.latitude?.toFixed(2));
 	const longitude = $derived(center.longitude?.toFixed(2));
 
 	onMount(async () => {
-		await import('@arcgis/map-components/dist/components/arcgis-map');
-		await import('@esri/calcite-components/dist/components/calcite-action');
-		await import('@esri/calcite-components/dist/components/calcite-action-bar');
-		await import('@esri/calcite-components/dist/components/calcite-button');
-		await import('@esri/calcite-components/dist/components/calcite-dropdown');
-		await import('@esri/calcite-components/dist/components/calcite-dropdown-group');
-		await import('@esri/calcite-components/dist/components/calcite-dropdown-item');
-		await import('@esri/calcite-components/dist/components/calcite-navigation');
-		await import('@esri/calcite-components/dist/components/calcite-navigation-logo');
-		await import('@esri/calcite-components/dist/components/calcite-shell');
-		await import('@esri/calcite-components/dist/components/calcite-shell-panel');
+		await import('@arcgis/map-components/components/arcgis-map');
+		await import('@esri/calcite-components/components/calcite-action');
+		await import('@esri/calcite-components/components/calcite-action-bar');
+		await import('@esri/calcite-components/components/calcite-button');
+		await import('@esri/calcite-components/components/calcite-dropdown');
+		await import('@esri/calcite-components/components/calcite-dropdown-group');
+		await import('@esri/calcite-components/components/calcite-dropdown-item');
+		await import('@esri/calcite-components/components/calcite-navigation');
+		await import('@esri/calcite-components/components/calcite-navigation-logo');
+		await import('@esri/calcite-components/components/calcite-shell');
+		await import('@esri/calcite-components/components/calcite-shell-panel');
 
 		mounted = true;
 	});
-
-	async function addLayerFromDynamicGroup(layer: FeatureLayer) {
-		const parentCatalogLayer = getCatalogLayerForLayer(layer);
-		if (!parentCatalogLayer) {
-			return;
-		}
-		const footprint = parentCatalogLayer.createFootprintFromLayer(layer);
-		if (!footprint) {
-			return;
-		}
-		const layerFromFootprint = await parentCatalogLayer.createLayerFromFootprint(footprint);
-		arcgisMapComponent?.map.layers.add(layerFromFootprint);
-	}
-
-	function handleArcgisPropertyChangeScaleRangeSlider(event: CustomEvent) {
-		const scaleRangeSlider = event.target as HTMLArcgisScaleRangeSliderElement;
-		if (event.detail.name === 'maxScale') {
-			bigfootSightingLayer.maxScale = scaleRangeSlider.maxScale;
-		}
-
-		if (event.detail.name === 'minScale') {
-			bigfootSightingLayer.minScale = scaleRangeSlider.minScale;
-		}
-	}
 
 	function handleArcgisReadyEditor() {
 		const featureLayerIds = arcgisMapComponent?.layerViews.map((layerView: LayerView) => {
@@ -119,68 +55,15 @@
 		});
 	}
 
-	function handleArcgisReadyLayerList(event: { target: HTMLArcgisLayerListElement }) {
-		const catalogLayer = new CatalogLayer({
-			url: 'https://services.arcgis.com/V6ZHFr6zdgNZuVG0/arcgis/rest/services/Sanborn_maps_catalog/FeatureServer'
-		});
-		catalogLayer.dynamicGroupLayer.maximumVisibleSublayers = 20;
+	function handleArcgisPropertyChangeScaleRangeSlider(event: CustomEvent) {
+		const scaleRangeSlider = event.target as HTMLArcgisScaleRangeSliderElement;
+		if (event.detail.name === 'maxScale') {
+			bigfootSightingLayer.maxScale = scaleRangeSlider.maxScale;
+		}
 
-		const knowledgeGraphLayer = new KnowledgeGraphLayer({
-			title: 'Phone calls',
-			url: `https://sampleserver7.arcgisonline.com/server/rest/services/Hosted/PhoneCalls/KnowledgeGraphServer`
-		});
-
-		arcgisMapComponent?.map.layers.addMany([catalogLayer, knowledgeGraphLayer]);
-
-		event.target?.selectedItems.on(
-			'change',
-			(event: { removed: Collection<ListItem>; added: Collection<ListItem> }) => {
-				const { removed, added } = event;
-				removed.forEach((item: ListItem) => {
-					const { layer } = item;
-					if (layer instanceof FeatureLayer) {
-						layer.effect = 'none';
-					}
-				});
-				added.forEach((item: ListItem) => {
-					const { layer } = item;
-					if (layer instanceof FeatureLayer) {
-						layer.effect = 'drop-shadow(2px, 2px, 3px) saturate(250%)';
-					}
-				});
-			}
-		);
-
-		reactiveUtils.on(
-			() => event.target?.catalogLayerList,
-			'trigger-action',
-			(event: any) => {
-				if (event.action.id === 'add-layer') {
-					event.target?.openedLayers.pop();
-					addLayerFromDynamicGroup(event.item.layer);
-					alert(`Added ${event.item.layer.title} to the map`);
-				}
-			}
-		);
-
-		reactiveUtils.watch(
-			() => event.target?.catalogLayerList,
-			() => {
-				highlightHandle && highlightHandle.remove();
-			}
-		);
-
-		reactiveUtils.watch(
-			() => event.target?.selectedItems.at(0)?.layer as Layer,
-			(layer: Layer) => layer && handleLayerSelection(layer)
-		);
-
-		reactiveUtils.watch(
-			() => event.target?.catalogLayerList?.selectedItems.at(0)?.layer as Layer,
-			(layer: Layer) => {
-				layer && handleLayerSelection(layer);
-			}
-		);
+		if (event.detail.name === 'minScale') {
+			bigfootSightingLayer.minScale = scaleRangeSlider.minScale;
+		}
 	}
 
 	async function handleArcgisReadyOrientedImageryViewer(event: CustomEvent) {
@@ -242,32 +125,6 @@
 		}
 	}
 
-	function handleArcgisTriggerActionLayerList(event: CustomEvent) {
-		const { id } = event.detail.action;
-		const { layer } = event.detail.item;
-
-		const addGroupLayer = (parent: Map | GroupLayer, layers: Collection<Layer>) => {
-			const groupLayer = new GroupLayer({
-				title: 'New group layer'
-			});
-			const layerIndex = layers.findIndex((mapLayer) => layer === mapLayer);
-			parent.add(groupLayer, layerIndex + 1);
-			groupLayer.add(layer as Layer);
-		};
-
-		if (id === 'add-group-layer' && layer) {
-			if (layer.parent instanceof GroupLayer) {
-				addGroupLayer(layer.parent, layer.parent.layers);
-			} else if (layer.parent instanceof Map) {
-				addGroupLayer(layer.parent, arcgisMapComponent?.map.layers as Collection<Layer>);
-			}
-		}
-
-		if (id === 'zoom-to') {
-			arcgisMapComponent?.goTo((layer as Layer).fullExtent);
-		}
-	}
-
 	function handleArcgisViewChange() {
 		center = arcgisMapComponent?.center as Point;
 	}
@@ -288,173 +145,81 @@
 			selectedItems.forEach(async (item) => {
 				switch (item.dataset.component) {
 					case 'arcgis-area-measurement-2d':
-						await import('@arcgis/map-components/dist/components/arcgis-area-measurement-2d');
+						await import('@arcgis/map-components/components/arcgis-area-measurement-2d');
 						break;
 					case 'arcgis-basemap-gallery':
-						await import('@arcgis/map-components/dist/components/arcgis-basemap-gallery');
+						await import('@arcgis/map-components/components/arcgis-basemap-gallery');
 						break;
 					case 'arcgis-basemap-layer-list':
-						await import('@arcgis/map-components/dist/components/arcgis-basemap-layer-list');
+						await import('@arcgis/map-components/components/arcgis-basemap-layer-list');
 						break;
 					case 'arcgis-basemap-toggle':
-						await import('@arcgis/map-components/dist/components/arcgis-basemap-toggle');
+						await import('@arcgis/map-components/components/arcgis-basemap-toggle');
 						break;
 					case 'arcgis-bookmarks':
-						await import('@arcgis/map-components/dist/components/arcgis-bookmarks');
+						await import('@arcgis/map-components/components/arcgis-bookmarks');
 						break;
 					case 'arcgis-compass':
-						await import('@arcgis/map-components/dist/components/arcgis-compass');
+						await import('@arcgis/map-components/components/arcgis-compass');
 						break;
 					case 'arcgis-coordinate-conversion':
-						await import('@arcgis/map-components/dist/components/arcgis-coordinate-conversion');
+						await import('@arcgis/map-components/components/arcgis-coordinate-conversion');
 						break;
 					case 'arcgis-directional-pad':
-						await import('@arcgis/map-components/dist/components/arcgis-directional-pad');
+						await import('@arcgis/map-components/components/arcgis-directional-pad');
 						break;
 					case 'arcgis-directions':
-						await import('@arcgis/map-components/dist/components/arcgis-directions');
+						await import('@arcgis/map-components/components/arcgis-directions');
 						break;
 					case 'arcgis-distance-measurement-2d':
-						await import('@arcgis/map-components/dist/components/arcgis-distance-measurement-2d');
+						await import('@arcgis/map-components/components/arcgis-distance-measurement-2d');
 						break;
 					case 'arcgis-editor':
-						await import('@arcgis/map-components/dist/components/arcgis-editor');
+						await import('@arcgis/map-components/components/arcgis-editor');
 						break;
 					case 'arcgis-home':
-						await import('@arcgis/map-components/dist/components/arcgis-home');
-						break;
-					case 'arcgis-layer-list':
-						await import('@arcgis/map-components/dist/components/arcgis-layer-list');
+						await import('@arcgis/map-components/components/arcgis-home');
 						break;
 					case 'arcgis-legend':
-						await import('@arcgis/map-components/dist/components/arcgis-legend');
+						await import('@arcgis/map-components/components/arcgis-legend');
 						break;
 					case 'arcgis-locate':
-						await import('@arcgis/map-components/dist/components/arcgis-locate');
+						await import('@arcgis/map-components/components/arcgis-locate');
 						break;
 					case 'arcgis-oriented-imagery-viewer':
-						await import('@arcgis/map-components/dist/components/arcgis-oriented-imagery-viewer');
+						await import('@arcgis/map-components/components/arcgis-oriented-imagery-viewer');
 						break;
 					case 'arcgis-print':
-						await import('@arcgis/map-components/dist/components/arcgis-print');
+						await import('@arcgis/map-components/components/arcgis-print');
 						break;
 					case 'arcgis-scale-bar':
-						await import('@arcgis/map-components/dist/components/arcgis-scale-bar');
+						await import('@arcgis/map-components/components/arcgis-scale-bar');
 						break;
 					case 'arcgis-scale-range-slider':
-						await import('@arcgis/map-components/dist/components/arcgis-scale-range-slider');
+						await import('@arcgis/map-components/components/arcgis-scale-range-slider');
 						break;
 					case 'arcgis-search':
-						await import('@arcgis/map-components/dist/components/arcgis-search');
+						await import('@arcgis/map-components/components/arcgis-search');
 						break;
 					case 'arcgis-sketch':
-						await import('@arcgis/map-components/dist/components/arcgis-sketch');
+						await import('@arcgis/map-components/components/arcgis-sketch');
 						break;
 					case 'arcgis-table-list':
-						await import('@arcgis/map-components/dist/components/arcgis-table-list');
+						await import('@arcgis/map-components/components/arcgis-table-list');
 						break;
 					case 'arcgis-time-slider':
-						await import('@arcgis/map-components/dist/components/arcgis-time-slider');
+						await import('@arcgis/map-components/components/arcgis-time-slider');
 						break;
 					case 'arcgis-track':
-						await import('@arcgis/map-components/dist/components/arcgis-track');
+						await import('@arcgis/map-components/components/arcgis-track');
 						break;
 					case 'arcgis-zoom':
-						await import('@arcgis/map-components/dist/components/arcgis-zoom');
+						await import('@arcgis/map-components/components/arcgis-zoom');
 						break;
 					default:
 						break;
 				}
 			});
-		}
-	}
-
-	async function handleLayerSelection(layer: Layer) {
-		console.log(layer.title, layer.type, layer.persistenceEnabled);
-
-		if (layer instanceof FeatureLayer) {
-			console.log('publishingInfo.status', layer.publishingInfo?.status);
-		}
-
-		if (isLayerFromCatalog(layer)) {
-			const parentCatalogLayer = getCatalogLayerForLayer(layer);
-			if (!parentCatalogLayer) {
-				return;
-			}
-			const footprint = parentCatalogLayer.createFootprintFromLayer(layer);
-
-			const layerView = (await arcgisMapComponent?.view.whenLayerView(
-				parentCatalogLayer
-			)) as CatalogLayerView;
-			await reactiveUtils.whenOnce(() => !layerView.updating);
-
-			highlightHandle?.remove();
-			if (!footprint || !layerView.footprintLayerView) {
-				return;
-			}
-			highlightHandle = layerView.footprintLayerView.highlight(footprint) as Handles;
-		}
-	}
-
-	async function listItemCreatedFunction(event: { item: ListItem }) {
-		const { item } = event;
-		const { layer } = item;
-
-		try {
-			layer && (await layer.load());
-		} catch {
-			console.log(`load failed for ${layer?.title}`);
-		}
-
-		item.panel = {
-			content: 'legend'
-		};
-
-		if (layer?.type === 'knowledge-graph-sublayer' || layer?.type === 'knowledge-graph') {
-			item.actionsSections = [
-				[
-					{
-						title: 'Open attribute table',
-						icon: 'table',
-						id: 'attribute-table'
-					},
-					{
-						icon: 'information',
-						id: 'information',
-						title: 'Show information'
-					}
-				]
-			];
-		}
-
-		if (isLayerFromCatalog(layer as Layer)) {
-			item.actionsSections = [
-				[
-					{
-						title: 'Add layer to map',
-						icon: 'add-layer',
-						id: 'add-layer'
-					}
-				]
-			];
-		}
-		if (!isLayerFromCatalog(layer as Layer)) {
-			item.actionsSections = [
-				[
-					{
-						title: 'Zoom to',
-						icon: 'zoom-to-object',
-						id: 'zoom-to'
-					}
-				],
-				[
-					{
-						title: 'Create group layer',
-						icon: 'folder-new',
-						id: 'add-group-layer'
-					}
-				]
-			];
 		}
 	}
 </script>
@@ -708,19 +473,7 @@
 						<arcgis-home data-testid="arcgis-home-component" reference-element="arcgis-map"
 						></arcgis-home>
 					{:else if selectedItem.dataset.component === 'arcgis-layer-list'}
-						<arcgis-layer-list
-							data-testid="arcgis-layer-list-component"
-							onarcgisTriggerAction={handleArcgisTriggerActionLayerList}
-							{knowledgeGraphOptions}
-							{listItemCreatedFunction}
-							onarcgisReady={handleArcgisReadyLayerList}
-							reference-element="arcgis-map"
-							selection-mode="single"
-							show-close-button
-							show-collapse-button
-							show-filter
-							show-heading
-						></arcgis-layer-list>
+						<LayerList referenceElement={arcgisMapComponent}></LayerList>
 					{:else if selectedItem.dataset.component === 'arcgis-legend'}
 						<arcgis-legend data-testid="arcgis-legend-component" reference-element="arcgis-map"
 						></arcgis-legend>
