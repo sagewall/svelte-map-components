@@ -1,5 +1,6 @@
 <script lang="ts">
 	import LayerList from '$lib/LayerList.svelte';
+	import VideoPlayer from '$lib/VideoPlayer.svelte';
 	import Point from '@arcgis/core/geometry/Point';
 	import FeatureLayer from '@arcgis/core/layers/FeatureLayer';
 	import type Layer from '@arcgis/core/layers/Layer';
@@ -389,6 +390,12 @@
 						label="Track">Track</calcite-dropdown-item
 					>
 					<calcite-dropdown-item
+						data-component="arcgis-video-player"
+						data-testid="arcgis-video-player-dropdown-item"
+						icon-start="video-layer"
+						label="Video Player">Video Player</calcite-dropdown-item
+					>
+					<calcite-dropdown-item
 						data-component="arcgis-zoom"
 						data-testid="arcgis-zoom-dropdown-item"
 						icon-start="magnifying-glass-plus"
@@ -523,6 +530,8 @@
 					{:else if selectedItem.dataset.component === 'arcgis-track'}
 						<arcgis-track data-testid="arcgis-track-component" reference-element="arcgis-map"
 						></arcgis-track>
+					{:else if selectedItem.dataset.component === 'arcgis-video-player'}
+						<VideoPlayer referenceElement={arcgisMapComponent}></VideoPlayer>
 					{:else if selectedItem.dataset.component === 'arcgis-zoom'}
 						<arcgis-zoom data-testid="arcgis-zoom-component" reference-element="arcgis-map"
 						></arcgis-zoom>
@@ -553,8 +562,14 @@
 		min-width: 100%;
 		width: 100%;
 	}
+
 	arcgis-map {
 		flex: 1;
+	}
+
+	calcite-shell-panel {
+		--calcite-shell-panel-max-width: 1000px;
+		--calcite-shell-panel-min-width: 100px;
 	}
 
 	#map-center {

@@ -20,6 +20,7 @@ export default ts.config(
 				HTMLArcgisOrientedImageryViewerElement: 'readonly',
 				HTMLArcgisScaleRangeSliderElement: 'readonly',
 				HTMLArcgisTimeSliderElement: 'readonly',
+				HTMLArcgisVideoPlayerElement: 'readonly',
 				HTMLCalciteDropdownElement: 'readonly',
 				HTMLCalciteDropdownItemElement: 'readonly'
 			}
