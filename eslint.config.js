@@ -15,6 +15,7 @@ export default ts.config(
 			globals: {
 				...globals.browser,
 				...globals.node,
+				HTMLArcgisLayerListElement: 'readonly',
 				HTMLArcgisMapElement: 'readonly',
 				HTMLArcgisOrientedImageryViewerElement: 'readonly',
 				HTMLArcgisScaleRangeSliderElement: 'readonly',

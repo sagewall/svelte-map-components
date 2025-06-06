@@ -12,19 +12,29 @@
 	import type Layer from '@arcgis/core/layers/Layer';
 	import Map from '@arcgis/core/Map';
 	import ActionButton from '@arcgis/core/support/actions/ActionButton';
+	import ActionToggle from '@arcgis/core/support/actions/ActionToggle';
 	import CatalogLayerView from '@arcgis/core/views/layers/CatalogLayerView';
 	import type ListItem from '@arcgis/core/widgets/LayerList/ListItem';
 	import { onDestroy, onMount } from 'svelte';
 
+	interface WatchHandle {
+		remove: () => void;
+	}
+
+	interface TriggerActionEvent {
+		action: ActionButton | ActionToggle;
+		item: ListItem;
+	}
+
 	let { referenceElement } = $props();
 
-	let catalogLayerListHandle: IHandle;
-	let catalogLayerListSelectedItemsHandle: IHandle;
-	let catalogLayerListTriggerHandle: IHandle;
-	let highlightHandle: IHandle;
-	let selectedItemsHandle: IHandle;
-	let tableListSelectedItemsHandle: IHandle;
-	let tableListTriggerHandle: IHandle;
+	let catalogLayerListHandle: WatchHandle;
+	let catalogLayerListSelectedItemsHandle: WatchHandle;
+	let catalogLayerListTriggerHandle: WatchHandle;
+	let highlightHandle: WatchHandle;
+	let selectedItemsHandle: WatchHandle;
+	let tableListSelectedItemsHandle: WatchHandle;
+	let tableListTriggerHandle: WatchHandle;
 	let mounted = $state(false);
 	let layerList: HTMLArcgisLayerListElement | null = $state(null);
 
@@ -129,10 +139,15 @@
 		catalogLayerListTriggerHandle = reactiveUtils.on(
 			() => event.target?.catalogLayerList,
 			'trigger-action',
-			(event: any) => {
+			(event: TriggerActionEvent) => {
 				if (event.action.id === 'add-layer') {
+					if (!event.item.layer) {
+						return;
+					}
+
 					layerList?.openedLayers.pop();
-					addLayerFromDynamicGroup(event.item.layer);
+
+					addLayerFromDynamicGroup(event.item.layer as FeatureLayer);
 					alert(`Added ${event.item.layer.title} to the map`);
 				}
 
@@ -145,30 +160,36 @@
 		catalogLayerListHandle = reactiveUtils.watch(
 			() => event.target?.catalogLayerList,
 			() => {
-				highlightHandle && highlightHandle.remove();
+				if (highlightHandle) {
+					highlightHandle.remove();
+				}
 			}
 		);
 
 		catalogLayerListSelectedItemsHandle = reactiveUtils.watch(
 			() => event.target?.catalogLayerList?.selectedItems.at(0)?.layer as Layer,
 			(layer: Layer) => {
-				layer && handleLayerSelection(layer);
+				if (layer) {
+					handleLayerSelection(layer);
+				}
 			}
 		);
 
 		tableListSelectedItemsHandle = reactiveUtils.watch(
 			() => event.target?.tableList?.selectedItems.at(0)?.layer as Layer,
 			(layer: Layer) => {
-				layer && handleLayerSelection(layer);
+				if (layer) {
+					handleLayerSelection(layer);
+				}
 			}
 		);
 
 		tableListTriggerHandle = reactiveUtils.on(
 			() => event.target?.tableList,
 			'trigger-action',
-			(event: any) => {
+			(event: TriggerActionEvent) => {
 				if (event.action.id === 'information') {
-					alert(`${event.item.layer.title}`);
+					alert(`${event.item.layer?.title}`);
 				}
 			}
 		);
@@ -289,17 +310,26 @@
 		if (!layerList) {
 			return;
 		}
-		target.checked
-			? (layerList.visibilityAppearance = 'checkbox')
-			: (layerList.visibilityAppearance = 'default');
+		if (target.checked) {
+			layerList.visibilityAppearance = 'checkbox';
+		} else {
+			layerList.visibilityAppearance = 'default';
+		}
 	}
 </script>
 
 {#if mounted}
-	<!-- svelte-ignore a11y_no_static_element_interactions, a11y_click_events_have_key_events (calcite is a11y compliant) -->
-	<calcite-button onclick={addCatalogLayer}> Add CatalogLayer </calcite-button>
-	<!-- svelte-ignore a11y_no_static_element_interactions, a11y_click_events_have_key_events (calcite is a11y compliant) -->
-	<calcite-button onclick={addKnowledgeGraphLayer}> Add KnowledgeGraphLayer </calcite-button>
+	<calcite-button onclick={addCatalogLayer} onkeyup={addCatalogLayer} role="button" tabindex="0">
+		Add CatalogLayer
+	</calcite-button>
+	<calcite-button
+		onclick={addKnowledgeGraphLayer}
+		onkeyup={addKnowledgeGraphLayer}
+		role="button"
+		tabindex="0"
+	>
+		Add KnowledgeGraphLayer
+	</calcite-button>
 	<calcite-label layout="inline">
 		<calcite-switch {oncalciteSwitchChange}></calcite-switch>
 		Checkboxes

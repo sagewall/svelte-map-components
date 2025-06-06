@@ -50,7 +50,7 @@
 
 		editableLayerIds.forEach((id) => {
 			if (!featureLayerIds?.includes(id)) {
-				arcgisMapComponent?.map.layers.add(new FeatureLayer({ portalItem: { id } }));
+				arcgisMapComponent?.map?.layers.add(new FeatureLayer({ portalItem: { id } }));
 			}
 		});
 	}
@@ -73,7 +73,7 @@
 				id: 'e8df83c23c8e47598b49e15ae7e5816b'
 			}
 		});
-		arcgisMapComponent?.map.layers.add(orientedImageryLayer);
+		arcgisMapComponent?.map?.layers.add(orientedImageryLayer);
 		await orientedImageryLayer.load();
 		orientedImageryViewer.layer = orientedImageryLayer;
 		arcgisMapComponent?.goTo(orientedImageryLayer.fullExtent);
@@ -85,7 +85,7 @@
 	}
 
 	function handleArcgisReadyTableList() {
-		const featureLayerIds = arcgisMapComponent?.map.layers.map((layer: Layer) => {
+		const featureLayerIds = arcgisMapComponent?.map?.layers.map((layer: Layer) => {
 			if (layer.type === 'feature') {
 				return (layer as FeatureLayer).portalItem?.id;
 			}
@@ -97,14 +97,14 @@
 			if (!featureLayerIds?.includes(id)) {
 				const table = new FeatureLayer({ portalItem: { id } });
 				await table.load();
-				arcgisMapComponent?.map.tables.add(table);
+				arcgisMapComponent?.map?.tables.add(table);
 			}
 		});
 	}
 
 	async function handleArcgisReadyTimeSlider(event: CustomEvent) {
 		const arcgisTimeSlider = event.target as HTMLArcgisTimeSliderElement;
-		const featureLayerUrls = arcgisMapComponent?.map.layers.map((layer: Layer) => {
+		const featureLayerUrls = arcgisMapComponent?.map?.layers.map((layer: Layer) => {
 			if (layer.type === 'feature') {
 				return (layer as FeatureLayer).url;
 			}
@@ -115,7 +115,7 @@
 
 		if (!featureLayerUrls?.includes(url)) {
 			const featureLayer = new FeatureLayer({ url });
-			arcgisMapComponent?.map.layers.add(featureLayer);
+			arcgisMapComponent?.map?.layers.add(featureLayer);
 
 			await featureLayer.load();
 			arcgisTimeSlider.fullTimeExtent = featureLayer.timeInfo?.fullTimeExtent;
@@ -132,7 +132,7 @@
 	function handleArcgisViewReadyChange(event: CustomEvent) {
 		arcgisMapComponent = event.target as HTMLArcgisMapElement;
 
-		bigfootSightingLayer = arcgisMapComponent.map.layers.find(
+		bigfootSightingLayer = arcgisMapComponent.map?.layers.find(
 			(layer: Layer) => layer.title === 'Bigfoot sighting'
 		) as FeatureLayer;
 	}
