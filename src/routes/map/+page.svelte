@@ -1,5 +1,6 @@
 <script lang="ts">
 	import LayerList from '$lib/LayerList.svelte';
+	import TableList from '$lib/TableList.svelte';
 	import VideoPlayer from '$lib/VideoPlayer.svelte';
 	import Point from '@arcgis/core/geometry/Point';
 	import FeatureLayer from '@arcgis/core/layers/FeatureLayer';
@@ -85,24 +86,6 @@
 	async function handleArcgisReadyScaleRangeSlider(event: CustomEvent) {
 		const arcgisScaleRangeSlider = event.target as HTMLArcgisScaleRangeSliderElement;
 		arcgisScaleRangeSlider.layer = bigfootSightingLayer;
-	}
-
-	function handleArcgisReadyTableList() {
-		const featureLayerIds = arcgisMapComponent?.map?.layers.map((layer: Layer) => {
-			if (layer.type === 'feature') {
-				return (layer as FeatureLayer).portalItem?.id;
-			}
-		});
-
-		const tableLayerIds = ['6aa49be79248400ebd28f1d0c6af3f9f'];
-
-		tableLayerIds.forEach(async (id) => {
-			if (!featureLayerIds?.includes(id)) {
-				const table = new FeatureLayer({ portalItem: { id } });
-				await table.load();
-				arcgisMapComponent?.map?.tables.add(table);
-			}
-		});
 	}
 
 	async function handleArcgisReadyTimeSlider(event: CustomEvent) {
@@ -204,9 +187,6 @@
 						break;
 					case 'arcgis-sketch':
 						await import('@arcgis/map-components/components/arcgis-sketch');
-						break;
-					case 'arcgis-table-list':
-						await import('@arcgis/map-components/components/arcgis-table-list');
 						break;
 					case 'arcgis-time-slider':
 						await import('@arcgis/map-components/components/arcgis-time-slider');
@@ -524,11 +504,10 @@
 						<arcgis-sketch data-testid="arcgis-sketch-component" reference-element="arcgis-map"
 						></arcgis-sketch>
 					{:else if selectedItem.dataset.component === 'arcgis-table-list'}
-						<arcgis-table-list
-							data-testid="arcgis-table-list-component"
-							onarcgisReady={handleArcgisReadyTableList}
-							reference-element="arcgis-map"
-						></arcgis-table-list>
+						<TableList
+							referenceElement={arcgisMapComponent}
+							featureTableElement={arcgisFeatureTableComponent}
+						></TableList>
 					{:else if selectedItem.dataset.component === 'arcgis-time-slider'}
 						<arcgis-time-slider
 							data-testid="arcgis-time-slider-component"
