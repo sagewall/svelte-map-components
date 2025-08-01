@@ -16,6 +16,7 @@
 	let mounted = $state(false);
 	let selectedItem: HTMLCalciteDropdownItemElement | null = $state(null);
 	let selectedItems: HTMLCalciteDropdownItemElement[] = $state([]);
+	let showFeatureTable: boolean = $state(false);
 
 	const latitude = $derived(center.latitude?.toFixed(2));
 	const longitude = $derived(center.longitude?.toFixed(2));
@@ -222,6 +223,12 @@
 				}
 			});
 		}
+	}
+
+	async function handleShowFeatureTableButtonClick() {
+		await import('@arcgis/map-components/components/arcgis-feature-table');
+		console.log('Show Feature Table Button Clicked');
+		showFeatureTable = !showFeatureTable;
 	}
 </script>
 
@@ -544,13 +551,36 @@
 			onarcgisViewChange={handleArcgisViewChange}
 			onarcgisViewReadyChange={handleArcgisViewReadyChange}
 		></arcgis-map>
-		{#if center}
-			<calcite-shell-panel slot="panel-bottom">
-				<span id="map-center">
+
+		<div slot="footer">
+			<calcite-button
+				icon-start="tables"
+				id="show-feature-table-button"
+				onclick={handleShowFeatureTableButtonClick}
+				onkeyup={(event: KeyboardEvent) => {
+					if (event.key === 'Enter' || event.key === ' ') {
+						handleShowFeatureTableButtonClick();
+						event.preventDefault();
+					}
+				}}
+				role="button"
+				tabindex="0"
+			></calcite-button>
+			{#if showFeatureTable}
+				<div id="feature-table-container">
+					<arcgis-feature-table
+						id="feature-table"
+						referenceElement={arcgisMapComponent}
+						layer={bigfootSightingLayer}
+					></arcgis-feature-table>
+				</div>
+			{/if}
+			{#if center}
+				<div id="map-center">
 					{longitude}°, {latitude}°
-				</span>
-			</calcite-shell-panel>
-		{/if}
+				</div>
+			{/if}
+		</div>
 	</calcite-shell>
 {:else}
 	<p>Loading...</p>
@@ -567,12 +597,17 @@
 		flex: 1;
 	}
 
-	calcite-shell-panel {
-		--calcite-shell-panel-max-width: 1000px;
-		--calcite-shell-panel-min-width: 100px;
+	#feature-table {
+		height: 33vh;
+		width: 100%;
 	}
 
 	#map-center {
 		width: 100%;
+		padding-left: 1rem;
+	}
+
+	#show-feature-table-button {
+		margin: 0.25rem;
 	}
 </style>
