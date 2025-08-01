@@ -206,7 +206,6 @@
 
 	async function handleShowFeatureTableButtonClick() {
 		await import('@arcgis/map-components/components/arcgis-feature-table');
-		console.log('Show Feature Table Button Clicked');
 		showFeatureTable = !showFeatureTable;
 	}
 </script>
