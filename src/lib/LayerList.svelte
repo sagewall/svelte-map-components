@@ -319,12 +319,27 @@
 </script>
 
 {#if mounted}
-	<calcite-button onclick={addCatalogLayer} onkeyup={addCatalogLayer} role="button" tabindex="0">
+	<calcite-button
+		onclick={addCatalogLayer}
+		onkeyup={(event: KeyboardEvent) => {
+			if (event.key === 'Enter' || event.key === ' ') {
+				addCatalogLayer();
+				event.preventDefault();
+			}
+		}}
+		role="button"
+		tabindex="0"
+	>
 		Add CatalogLayer
 	</calcite-button>
 	<calcite-button
 		onclick={addKnowledgeGraphLayer}
-		onkeyup={addKnowledgeGraphLayer}
+		onkeyup={(event: KeyboardEvent) => {
+			if (event.key === 'Enter' || event.key === ' ') {
+				addKnowledgeGraphLayer();
+				event.preventDefault();
+			}
+		}}
 		role="button"
 		tabindex="0"
 	>
