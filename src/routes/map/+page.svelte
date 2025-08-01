@@ -13,6 +13,7 @@
 	let arcgisMapComponent: HTMLArcgisMapElement | null = $state(null);
 	let bigfootSightingLayer: FeatureLayer = $state(new FeatureLayer());
 	let center: Point = $state(new Point());
+	let arcgisFeatureTableComponent: HTMLArcgisFeatureTableElement | null = $state(null);
 	let mounted = $state(false);
 	let selectedItem: HTMLCalciteDropdownItemElement | null = $state(null);
 	let selectedItems: HTMLCalciteDropdownItemElement[] = $state([]);
@@ -132,9 +133,7 @@
 	}
 
 	function handleArcgisViewReadyChange(event: CustomEvent) {
-		arcgisMapComponent = event.target as HTMLArcgisMapElement;
-
-		bigfootSightingLayer = arcgisMapComponent.map?.layers.find(
+		bigfootSightingLayer = arcgisMapComponent?.map?.layers.find(
 			(layer: Layer) => layer.title === 'Bigfoot sighting'
 		) as FeatureLayer;
 	}
@@ -487,7 +486,10 @@
 						<arcgis-home data-testid="arcgis-home-component" reference-element="arcgis-map"
 						></arcgis-home>
 					{:else if selectedItem.dataset.component === 'arcgis-layer-list'}
-						<LayerList referenceElement={arcgisMapComponent}></LayerList>
+						<LayerList
+							featureTableElement={arcgisFeatureTableComponent}
+							referenceElement={arcgisMapComponent}
+						></LayerList>
 					{:else if selectedItem.dataset.component === 'arcgis-legend'}
 						<arcgis-legend data-testid="arcgis-legend-component" reference-element="arcgis-map"
 						></arcgis-legend>
@@ -547,6 +549,7 @@
 			</div>
 		</calcite-shell-panel>
 		<arcgis-map
+			bind:this={arcgisMapComponent}
 			item-id="ef2644781da844648e8bb30ab52a02bc"
 			onarcgisViewChange={handleArcgisViewChange}
 			onarcgisViewReadyChange={handleArcgisViewReadyChange}
@@ -569,9 +572,11 @@
 			{#if showFeatureTable}
 				<div id="feature-table-container">
 					<arcgis-feature-table
+						bind:this={arcgisFeatureTableComponent}
 						id="feature-table"
 						referenceElement={arcgisMapComponent}
 						layer={bigfootSightingLayer}
+						show-layer-dropdown
 					></arcgis-feature-table>
 				</div>
 			{/if}

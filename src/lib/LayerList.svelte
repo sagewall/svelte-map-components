@@ -26,7 +26,7 @@
 		item: ListItem;
 	}
 
-	let { referenceElement } = $props();
+	let { referenceElement, featureTableElement } = $props();
 
 	let catalogLayerListHandle: WatchHandle;
 	let catalogLayerListSelectedItemsHandle: WatchHandle;
@@ -50,6 +50,13 @@
 						icon: 'information',
 						id: 'information',
 						title: 'Show information'
+					}
+				],
+				[
+					{
+						icon: 'table',
+						id: 'open-table',
+						title: 'Open table'
 					}
 				]
 			];
@@ -190,6 +197,14 @@
 			(event: TriggerActionEvent) => {
 				if (event.action.id === 'information') {
 					alert(`${event.item.layer?.title}`);
+				}
+
+				if (event.action.id === 'open-table') {
+					if (featureTableElement) {
+						featureTableElement.layer = event.item.layer;
+					} else {
+						alert('Open the feature table first');
+					}
 				}
 			}
 		);
