@@ -13,7 +13,7 @@
 	import Map from '@arcgis/core/Map';
 	import ActionButton from '@arcgis/core/support/actions/ActionButton';
 	import ActionToggle from '@arcgis/core/support/actions/ActionToggle';
-	import CatalogLayerView from '@arcgis/core/views/layers/CatalogLayerView';
+	import type { CatalogLayerView } from '@arcgis/core/views/layers/CatalogLayerView';
 	import type ListItem from '@arcgis/core/widgets/LayerList/ListItem';
 	import { onDestroy, onMount } from 'svelte';
 
