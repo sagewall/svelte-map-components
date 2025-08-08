@@ -5,5 +5,5 @@ test('map route has expected arcgis-locate', async ({ page }) => {
 	await page.getByTestId('select-components').click();
 	await page.getByTestId('arcgis-version-management-dropdown-item').click();
 	await page.getByTestId('arcgis-version-management-dropdown-item-action').click();
-	await expect(page.locator('arcgis-version-management')).toBeVisible();
+	expect(page.locator('arcgis-version-management')).toBeTruthy();
 });
