@@ -115,7 +115,7 @@
 		center = arcgisMapComponent?.center as Point;
 	}
 
-	function handleArcgisViewReadyChange(event: CustomEvent) {
+	function handleArcgisViewReadyChange() {
 		bigfootSightingLayer = arcgisMapComponent?.map?.layers.find(
 			(layer: Layer) => layer.title === 'Bigfoot sighting'
 		) as FeatureLayer;

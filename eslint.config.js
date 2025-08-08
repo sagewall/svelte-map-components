@@ -15,10 +15,12 @@ export default ts.config(
 			globals: {
 				...globals.browser,
 				...globals.node,
+				HTMLArcgisFeatureTableElement: 'readonly',
 				HTMLArcgisLayerListElement: 'readonly',
 				HTMLArcgisMapElement: 'readonly',
 				HTMLArcgisOrientedImageryViewerElement: 'readonly',
 				HTMLArcgisScaleRangeSliderElement: 'readonly',
+				HTMLArcgisTableListElement: 'readonly',
 				HTMLArcgisTimeSliderElement: 'readonly',
 				HTMLArcgisVideoPlayerElement: 'readonly',
 				HTMLCalciteDropdownElement: 'readonly',
