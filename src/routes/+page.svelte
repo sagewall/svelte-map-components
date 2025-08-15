@@ -45,16 +45,16 @@
 				>
 			</calcite-card>
 
-			<calcite-card label="Components using secured services">
+			<calcite-card label="Utility Network Components">
 				<img
 					alt="A thumbnail of the utility network map"
 					class="thumbnail"
 					src={utilityNetwork}
 					slot="thumbnail"
 				/>
-				<span slot="heading">Components using secured services</span>
+				<span slot="heading">Utility Network Components</span>
 				<pre slot="description">viewer01/I68VGU^nMurF</pre>
-				<calcite-link href="/secure-services" slot="description"
+				<calcite-link href="/utility-network" slot="description"
 					>Add components to a map</calcite-link
 				>
 			</calcite-card>
