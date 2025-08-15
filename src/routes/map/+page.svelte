@@ -580,6 +580,11 @@
 		flex: 1;
 	}
 
+	calcite-shell-panel {
+		--calcite-shell-panel-max-width: 50vw;
+		--calcite-shell-panel-min-width: fit-content;
+	}
+
 	#feature-table {
 		height: 33vh;
 		width: 100%;

@@ -115,7 +115,7 @@
 				</calcite-dropdown-group>
 			</calcite-dropdown>
 		</calcite-navigation>
-		<calcite-shell-panel slot="panel-start" position="start" resizable width-scale="l">
+		<calcite-shell-panel slot="panel-start" position="start" resizable>
 			<calcite-action-bar slot="action-bar">
 				{#each selectedItems as item, index (item.dataset.testid)}
 					<calcite-action
@@ -183,5 +183,10 @@
 
 	arcgis-map {
 		flex: 1;
+	}
+
+	calcite-shell-panel {
+		--calcite-shell-panel-max-width: 50vw;
+		--calcite-shell-panel-min-width: fit-content;
 	}
 </style>
