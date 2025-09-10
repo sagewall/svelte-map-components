@@ -6,6 +6,6 @@ test('map route has expected map', async ({ page }) => {
 });
 
 test('utility-network route has expected map', async ({ page }) => {
-	await page.goto('/secure-services');
+	await page.goto('/utility-network');
 	await expect(page.locator('arcgis-map')).toBeVisible();
 });
