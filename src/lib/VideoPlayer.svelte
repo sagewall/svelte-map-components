@@ -9,7 +9,7 @@
 
 	const layer = new VideoLayer({
 		autoplay: true,
-		url: 'https://dev000276.esri.com/video/rest/services/cheyenne1/VideoServer/0'
+		url: 'https://ragsrqawin01vs.ags.esri.com/video/rest/services/Video_Conf_20251009_194021/VideoServer/0'
 	});
 
 	onMount(async () => {
