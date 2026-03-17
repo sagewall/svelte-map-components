@@ -74,14 +74,16 @@
 					{
 						icon: 'information',
 						id: 'information',
-						title: 'Show information'
+						title: 'Show information',
+						type: 'button'
 					}
 				],
 				[
 					{
 						icon: 'table',
 						id: 'open-table',
-						title: 'Open table'
+						title: 'Open table',
+						type: 'button'
 					}
 				]
 			];
