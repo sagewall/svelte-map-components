@@ -80,7 +80,9 @@
 		arcgisMapComponent?.map?.layers.add(orientedImageryLayer);
 		await orientedImageryLayer.load();
 		orientedImageryViewer.layer = orientedImageryLayer;
-		arcgisMapComponent?.goTo(orientedImageryLayer.fullExtent);
+		if (orientedImageryLayer.fullExtent) {
+			arcgisMapComponent?.goTo(orientedImageryLayer.fullExtent);
+		}
 	}
 
 	async function handleArcgisReadyScaleRangeSlider(event: CustomEvent) {

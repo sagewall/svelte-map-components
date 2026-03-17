@@ -15,25 +15,28 @@
 		"test:e2e": "playwright test"
 	},
 	"devDependencies": {
-		"@playwright/test": "^1.56.1",
-		"@sveltejs/adapter-netlify": "^5.2.4",
-		"@sveltejs/kit": "^2.47.1",
-		"@sveltejs/vite-plugin-svelte": "^6.2.1",
+		"@eslint/js": "^10.0.1",
+		"@playwright/test": "^1.58.2",
+		"@sveltejs/adapter-netlify": "^6.0.4",
+		"@sveltejs/kit": "^2.55.0",
+		"@sveltejs/vite-plugin-svelte": "^7.0.0",
 		"@types/eslint": "^9.6.1",
-		"eslint": "^9.38.0",
+		"eslint": "^10.0.3",
 		"eslint-config-prettier": "^10.1.8",
-		"eslint-plugin-svelte": "^3.12.4",
-		"globals": "^16.4.0",
-		"prettier": "^3.6.2",
-		"prettier-plugin-svelte": "^3.4.0",
-		"svelte": "^5.40.2",
-		"svelte-check": "^4.3.3",
+		"eslint-plugin-svelte": "^3.15.2",
+		"globals": "^17.4.0",
+		"prettier": "^3.8.1",
+		"prettier-plugin-svelte": "^3.5.1",
+		"svelte": "^5.53.13",
+		"svelte-check": "^4.4.5",
 		"typescript": "^5.9.3",
-		"typescript-eslint": "^8.46.1",
-		"vite": "^7.1.10",
-		"vitest": "^3.2.4"
+		"typescript-eslint": "^8.57.1",
+		"vite": "^8.0.0",
+		"vitest": "^4.1.0"
 	},
 	"dependencies": {
-		"@arcgis/map-components": "~4.34.0"
+		"@arcgis/core": "^5.0.0",
+		"@arcgis/map-components": "^5.0.0",
+		"@esri/calcite-components": "^5.0.2"
 	}
 }

@@ -13,7 +13,7 @@
 	import Map from '@arcgis/core/Map';
 	import ActionButton from '@arcgis/core/support/actions/ActionButton';
 	import type ActionToggle from '@arcgis/core/support/actions/ActionToggle';
-	import type { CatalogLayerView } from '@arcgis/core/views/layers/CatalogLayerView';
+	import type CatalogLayerView from '@arcgis/core/views/layers/CatalogLayerView';
 	import type ListItem from '@arcgis/core/widgets/LayerList/ListItem';
 	import { onDestroy, onMount } from 'svelte';
 
@@ -49,14 +49,16 @@
 					{
 						icon: 'information',
 						id: 'information',
-						title: 'Show information'
+						title: 'Show information',
+						type: 'button'
 					}
 				],
 				[
 					{
 						icon: 'table',
 						id: 'open-table',
-						title: 'Open table'
+						title: 'Open table',
+						type: 'button'
 					}
 				]
 			];
@@ -121,7 +123,7 @@
 	function onarcgisReady(event: { target: HTMLArcgisLayerListElement }) {
 		event.target?.selectedItems.on(
 			'change',
-			(event: { removed: Collection<ListItem>; added: Collection<ListItem> }) => {
+			(event: { removed: ListItem[]; added: ListItem[] }) => {
 				const { removed, added } = event;
 				removed.forEach((item: ListItem) => {
 					const { layer } = item;

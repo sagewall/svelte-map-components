@@ -44,17 +44,13 @@
 			selectedItems.forEach(async (item) => {
 				switch (item.dataset.component) {
 					case 'arcgis-utility-network-associations':
-						await import(
-							'@arcgis/map-components/dist/components/arcgis-utility-network-associations'
-						);
+						await import('@arcgis/map-components/dist/components/arcgis-utility-network-associations');
 						break;
 					case 'arcgis-utility-network-trace':
 						await import('@arcgis/map-components/dist/components/arcgis-utility-network-trace');
 						break;
 					case 'arcgis-utility-network-validate-topology':
-						await import(
-							'@arcgis/map-components/dist/components/arcgis-utility-network-validate-topology'
-						);
+						await import('@arcgis/map-components/dist/components/arcgis-utility-network-validate-topology');
 						break;
 					case 'arcgis-version-management':
 						await import('@arcgis/map-components/dist/components/arcgis-version-management');
